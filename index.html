@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>turtle fun</title>
+<style>
+polyline.turtle {
+  stroke: black;
+  fill: none;
+}
+</style>
+<svg width="300" height="300"></svg>
+<script>
+function Turtle(parent) {
+  var self = {};
+  var rotation = 0;
+  var position = {x: 0, y: 0};
+  var path = document.createElementNS(parent.namespaceURI, "polyline");
+
+  self.forward = function(distance) {
+    var radians = 2 * Math.PI * (rotation / 360);
+    position.x += Math.cos(radians) * distance;
+    position.y += Math.sin(radians) * distance;
+    path.setAttribute("points", path.getAttribute("points") +
+                                ", " + position.x.toFixed(2) +
+                                " " + position.y.toFixed(2));
+    return self;
+  };
+
+  self.rotate = function(degrees) {
+    rotation = (rotation + degrees) % 360;
+    return self;
+  };
+
+  path.setAttribute("points", "0 0");
+  path.setAttribute("class", "turtle");
+  parent.appendChild(path);
+
+  return self;
+}
+
+var t = Turtle(document.getElementsByTagName("svg")[0]);
+
+t.forward(30)
+ .rotate(90)
+ .forward(30)
+ .rotate(90)
+ .forward(30);
+</script>
