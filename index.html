@@ -4,7 +4,7 @@
 <canvas width="300" height="300"></canvas>
 <script>
 function Turtle(canvas) {
-  var self = {penStyle: 'black'};
+  var self = {penStyle: 'black', penWidth: 1};
   var rotation = 0;
   var position = {x: 0, y: 0};
 
@@ -12,6 +12,7 @@ function Turtle(canvas) {
     var ctx = canvas.getContext('2d');
     var radians = 2 * Math.PI * (rotation / 360);
     ctx.strokeStyle = self.penStyle;
+    ctx.lineWidth = self.penWidth;
     ctx.beginPath();
     ctx.moveTo(position.x, position.y);
     position.x += Math.cos(radians) * distance;
@@ -32,6 +33,7 @@ function Turtle(canvas) {
 var t = Turtle(document.getElementsByTagName("canvas")[0]);
 
 t.forward(30);
+t.penWidth = 5;
 t.penStyle = "orange";
 t.rotate(90);
 t.forward(30);
