@@ -4,27 +4,33 @@
 <canvas width="300" height="300"></canvas>
 <script>
 function Turtle(canvas) {
-  var self = {penStyle: 'black', penWidth: 1};
   var rotation = 0;
   var position = {x: 0, y: 0};
-
-  self.forward = function(distance) {
-    var ctx = canvas.getContext('2d');
+  var isPenDown = true;
+  var move = function(distance) {
     var radians = 2 * Math.PI * (rotation / 360);
-    ctx.strokeStyle = self.penStyle;
-    ctx.lineWidth = self.penWidth;
-    ctx.beginPath();
-    ctx.moveTo(position.x, position.y);
     position.x += Math.cos(radians) * distance;
     position.y += Math.sin(radians) * distance;
-    ctx.lineTo(position.x, position.y);
-    ctx.stroke();
-    return self;
   };
-
-  self.rotate = function(degrees) {
-    rotation = (rotation + degrees) % 360;
-    return self;
+  var self = {
+    penStyle: 'black',
+    penWidth: 1,
+    penUp: function() { isPenDown = false; },
+    penDown: function() { isPenDown = true; },
+    forward: function(distance) {
+      if (!isPenDown) return move(distance);
+      var ctx = canvas.getContext('2d');
+      ctx.strokeStyle = self.penStyle;
+      ctx.lineWidth = self.penWidth;
+      ctx.beginPath();
+      ctx.moveTo(position.x, position.y);
+      move(distance);
+      ctx.lineTo(position.x, position.y);
+      ctx.stroke();
+    },
+    rotate: function(degrees) {
+      rotation = (rotation + degrees) % 360;
+    }
   };
 
   return self;
@@ -36,7 +42,9 @@ t.forward(30);
 t.penWidth = 5;
 t.penStyle = "orange";
 t.rotate(90);
+t.penUp();
 t.forward(30);
+t.penDown();
 t.rotate(90);
 t.forward(30);
 </script>
