@@ -1,22 +1,37 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<title>turtle fun</title>
-<canvas width="300" height="300"></canvas>
+<title>TinyTurtle Box Example</title>
+<style>
+script {
+  padding-left: 1em;
+  border-left: 4px solid #f0f0f0;
+  display: block;
+  white-space: pre-wrap;
+  font-family: Menlo, Monaco, "Lucida Console", monospace;
+  font-size: smaller;
+}
+
+canvas {
+  border: 1px dotted gray;
+}
+</style>
+<h1>TinyTurtle Box Example</h1>
+<canvas width="200" height="200"></canvas>
+<p>Source code for the above image:</p>
 <script src="tiny-turtle.js"></script>
-<script>
-TinyTurtle.apply(window);
+<script>TinyTurtle.apply(window);
 
 function box(length) {
   for (var i = 0; i < 4; i++) {
-    fd(length);
-    rt(90);
+    forward(length);
+    right(90);
   }
 }
 
 penStyle = 'purple';
-
-for (var i = 0; i < 30; i++) {
-  box(60-(i*2));
-  lt(10);
-}
+box(90);
+left(10);
+box(80);
+left(10);
+box(70);
 </script>
