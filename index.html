@@ -7,16 +7,11 @@
 var t = TinyTurtle(document.getElementById("canvas"));
 
 t.box = function(length) {
-  for (var i = 0; i < 4; i++) {
-    t.forward(length);
-    t.right(90);
-  }
+  for (var i = 0; i < 4; i++) t.fd(length).rt(90);
+  return t;
 };
 
 t.penStyle = 'purple';
 
-for (var i = 0; i < 30; i++) {
-  t.box(60-(i*2));
-  t.left(10);
-}
+for (var i = 0; i < 30; i++) t.box(60-(i*2)).lt(10);
 </script>
