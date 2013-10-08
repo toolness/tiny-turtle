@@ -4,9 +4,13 @@
 <canvas width="300" height="300"></canvas>
 <script>
 function Turtle(canvas) {
-  var rotation = 0;
-  var position = {x: 0, y: 0};
+  var rotation = 270;
+  var position = {x: canvas.width / 2, y: canvas.height / 2};
   var isPenDown = true;
+  var rotate = function(degrees) {
+    rotation = (rotation + degrees) % 360;
+    if (rotation < 0) rotation = 360 - rotation;
+  };
   var move = function(distance) {
     var radians = 2 * Math.PI * (rotation / 360);
     position.x += Math.cos(radians) * distance;
@@ -28,9 +32,8 @@ function Turtle(canvas) {
       ctx.lineTo(position.x, position.y);
       ctx.stroke();
     },
-    rotate: function(degrees) {
-      rotation = (rotation + degrees) % 360;
-    }
+    left: function(degrees) { rotate(-degrees); },
+    right: function(degrees) { rotate(degrees); }
   };
 
   return self;
@@ -38,13 +41,17 @@ function Turtle(canvas) {
 
 var t = Turtle(document.getElementsByTagName("canvas")[0]);
 
-t.forward(30);
-t.penWidth = 5;
-t.penStyle = "orange";
-t.rotate(90);
-t.penUp();
-t.forward(30);
-t.penDown();
-t.rotate(90);
-t.forward(30);
+t.box = function(length) {
+  for (var i = 0; i < 4; i++) {
+    t.forward(length);
+    t.right(90);
+  }
+};
+
+t.penStyle = 'purple';
+
+for (var i = 0; i < 30; i++) {
+  t.box(60-(i*2));
+  t.left(10);
+}
 </script>
