@@ -74,7 +74,7 @@ example:
 ```coffeescript
 class MyTurtle extends TinyTurtle
   box: (length) ->
-    for i in [1,2,3,4]
+    for i in [1..4]
       this.forward length
       this.right 90
 
