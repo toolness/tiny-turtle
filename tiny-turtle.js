@@ -9,7 +9,7 @@ function TinyTurtle(canvas) {
   var isPenDown = true;
   var rotate = function(degrees) {
     rotation = (rotation + degrees) % 360;
-    if (rotation < 0) rotation = 360 - rotation;
+    if (rotation < 0) rotation += 360;
   };
   var move = function(distance) {
     var radians = 2 * Math.PI * (rotation / 360);
@@ -19,6 +19,9 @@ function TinyTurtle(canvas) {
   var self = {
     penStyle: 'black',
     penWidth: 1,
+    get rotation() { return rotation; },
+    get position() { return {x: position.x, y: position.y}; },
+    get pen() { return isPenDown ? 'down' : 'up'; },
     penUp: function() { isPenDown = false; },
     penDown: function() { isPenDown = true; },
     forward: function(distance) {
@@ -35,6 +38,8 @@ function TinyTurtle(canvas) {
     left: function(degrees) { rotate(-degrees); },
     right: function(degrees) { rotate(degrees); }
   };
+
+  self.fd = self.forward; self.lt = self.left; self.rt = self.right;
 
   return self;
 }
