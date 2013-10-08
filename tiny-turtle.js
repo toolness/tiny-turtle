@@ -20,6 +20,7 @@ function TinyTurtle(canvas) {
     position.y += Math.sin(radians) * distance;
   };
 
+  self.canvas = canvas;
   self.penStyle = 'black';
   self.penWidth = 1;
   self.penUp = function() { isPenDown = false; return self; };
