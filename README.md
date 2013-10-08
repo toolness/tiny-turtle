@@ -74,11 +74,9 @@ example:
 ```coffeescript
 class MyTurtle extends TinyTurtle
   box: (length) ->
-    num = 0
-    while num < 4
+    for i in [1,2,3,4]
       this.forward length
       this.right 90
-      num++
 
 t = new MyTurtle
 
