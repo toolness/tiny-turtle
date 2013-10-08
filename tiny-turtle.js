@@ -1,4 +1,5 @@
 function TinyTurtle(canvas) {
+  var self = this;
   var rotation = 270;
   var position = {
     // See http://diveintohtml5.info/canvas.html#pixel-madness for
@@ -7,8 +8,8 @@ function TinyTurtle(canvas) {
     y: canvas.height / 2 + 0.5
   };
   var isPenDown = true;
-  var rotate = function(degrees) {
-    rotation = (rotation + degrees) % 360;
+  var rotate = function(deg) {
+    rotation = (rotation + deg) % 360;
     if (rotation < 0) rotation += 360;
   };
   var move = function(distance) {
@@ -16,31 +17,31 @@ function TinyTurtle(canvas) {
     position.x += Math.cos(radians) * distance;
     position.y += Math.sin(radians) * distance;
   };
-  var self = {
-    penStyle: 'black',
-    penWidth: 1,
-    get rotation() { return rotation; },
-    get position() { return {x: position.x, y: position.y}; },
-    get pen() { return isPenDown ? 'down' : 'up'; },
-    penUp: function() { isPenDown = false; return self; },
-    penDown: function() { isPenDown = true; return self; },
-    forward: function(distance) {
-      if (!isPenDown) { move(distance); return self; }
-      var ctx = canvas.getContext('2d');
-      ctx.strokeStyle = self.penStyle;
-      ctx.lineWidth = self.penWidth;
-      ctx.beginPath();
-      ctx.moveTo(position.x, position.y);
-      move(distance);
-      ctx.lineTo(position.x, position.y);
-      ctx.stroke();
-      return self;
-    },
-    left: function(degrees) { rotate(-degrees); return self; },
-    right: function(degrees) { rotate(degrees); return self; }
-  };
 
-  self.fd = self.forward; self.lt = self.left; self.rt = self.right;
+  self.penStyle = 'black';
+  self.penWidth = 1;
+  self.penUp = function() { isPenDown = false; return self; };
+  self.penDown = function() { isPenDown = true; return self; };
+  self.forward = self.fd = function(distance) {
+    if (!isPenDown) { move(distance); return self; }
+    var ctx = canvas.getContext('2d');
+    ctx.strokeStyle = self.penStyle;
+    ctx.lineWidth = self.penWidth;
+    ctx.beginPath();
+    ctx.moveTo(position.x, position.y);
+    move(distance);
+    ctx.lineTo(position.x, position.y);
+    ctx.stroke();
+    return self;
+  };
+  self.left = self.lt = function(deg) { rotate(-deg); return self; };
+  self.right = self.rt = function(deg) { rotate(deg); return self; };
+
+  Object.defineProperties(self, {
+    rotation: {get: function() { return rotation; }},
+    position: {get: function() { return {x: position.x, y: position.y}; }},
+    pen: {get: function() { return isPenDown ? 'down' : 'up'; }}
+  });
 
   return self;
 }
