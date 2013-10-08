@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <title>turtle fun</title>
-<canvas id="canvas" width="300" height="300"></canvas>
+<canvas width="300" height="300"></canvas>
 <script src="tiny-turtle.js"></script>
 <script>
-TinyTurtle(document.getElementById("canvas"));
+TinyTurtle.apply(window);
 
 function box(length) {
   for (var i = 0; i < 4; i++) {

@@ -1,4 +1,6 @@
 function TinyTurtle(canvas) {
+  canvas = canvas || document.querySelector('canvas');
+
   var self = this;
   var rotation = 270;
   var position = {
