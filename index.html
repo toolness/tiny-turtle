@@ -1,28 +1,19 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<title>TinyTurtle Box Example</title>
+<title>TinyTurtle Lab</title>
 <style>
-script {
-  padding-left: 1em;
-  border-left: 4px solid #f0f0f0;
-  display: block;
-  white-space: pre-wrap;
-  font-family: Menlo, Monaco, "Lucida Console", monospace;
-  font-size: smaller;
-}
-
 canvas {
   border: 1px dotted gray;
 }
+
+#code {
+  display: block;
+}
 </style>
 <a href="https://github.com/toolness/tiny-turtle"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
-<h1>TinyTurtle Box Example</h1>
-<canvas width="200" height="200"></canvas>
-<p>Source code for the above image:</p>
-<script src="tiny-turtle.js"></script>
-<script>TinyTurtle.apply(window);
-
-function box(length) {
+<h1>TinyTurtle Lab</h1>
+<canvas id="canvas" width="200" height="200"></canvas>
+<textarea id="code" rows="25" cols="50">function box(length) {
   for (var i = 0; i < 4; i++) {
     forward(length);
     right(90);
@@ -35,4 +26,47 @@ left(10);
 box(80);
 left(10);
 box(70);
+</textarea>
+<script>
+var $ = document.querySelector.bind(document);
+var worker;
+var source;
+var renderTimeout;
+var code = $("#code");
+var canvas = $("#canvas");
+
+function queueRendering() {
+  clearTimeout(renderTimeout);
+  renderTimeout = setTimeout(render, 100);
+}
+
+function render() {
+  if (code.value == source) return;
+  source = code.value;
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (worker) worker.terminate();
+  worker = new Worker("index.worker.js");
+  worker.onmessage = function(e) {
+    var data = e.data;
+    if (data.cmd == 'line') {
+      var ctx = canvas.getContext('2d');
+      ctx.strokeStyle = data.strokeStyle;
+      ctx.lineWidth = data.lineWidth;
+      ctx.beginPath();
+      ctx.moveTo(data.start.x, data.start.y);
+      ctx.lineTo(data.end.x, data.end.y);
+      ctx.stroke();
+    } else throw new Error("unexpected cmd: " + e.data.cmd);
+  };
+  worker.postMessage({
+    source: code.value,
+    height: canvas.height,
+    width: canvas.width
+  });
+  setTimeout(worker.terminate.bind(worker), 5000);
+}
+
+render();
+code.onkeyup = code.onchange = queueRendering;
 </script>
