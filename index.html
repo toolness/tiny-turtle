@@ -49,15 +49,13 @@ function render() {
   worker = new Worker("index.worker.js");
   worker.onmessage = function(e) {
     var data = e.data;
-    if (data.cmd == 'line') {
-      var ctx = canvas.getContext('2d');
-      ctx.strokeStyle = data.strokeStyle;
-      ctx.lineWidth = data.lineWidth;
-      ctx.beginPath();
-      ctx.moveTo(data.start.x, data.start.y);
-      ctx.lineTo(data.end.x, data.end.y);
-      ctx.stroke();
-    } else throw new Error("unexpected cmd: " + e.data.cmd);
+    var ctx = canvas.getContext('2d');
+    ctx.strokeStyle = data.strokeStyle;
+    ctx.lineWidth = data.lineWidth;
+    ctx.beginPath();
+    ctx.moveTo(data.start.x, data.start.y);
+    ctx.lineTo(data.end.x, data.end.y);
+    ctx.stroke();
   };
   worker.postMessage({
     source: code.value,

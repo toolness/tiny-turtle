@@ -12,7 +12,6 @@ FakeCanvas.prototype = {
   lineTo: function(x, y) { this._end = {x: x, y: y}; },
   stroke: function() {
     postMessage({
-      cmd: 'line',
       start: this._start,
       end: this._end,
       strokeStyle: this.strokeStyle,
