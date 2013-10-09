@@ -27,6 +27,7 @@ box(80);
 left(10);
 box(70);
 </textarea>
+<script src="tiny-turtle.js"></script>
 <script>
 var $ = document.querySelector.bind(document);
 var worker;
@@ -48,14 +49,7 @@ function render() {
   if (worker) worker.terminate();
   worker = new Worker("index.worker.js");
   worker.onmessage = function(e) {
-    var data = e.data;
-    var ctx = canvas.getContext('2d');
-    ctx.strokeStyle = data.strokeStyle;
-    ctx.lineWidth = data.lineWidth;
-    ctx.beginPath();
-    ctx.moveTo(data.start.x, data.start.y);
-    ctx.lineTo(data.end.x, data.end.y);
-    ctx.stroke();
+    TinyTurtle.drawLine.apply(TinyTurtle, [canvas].concat(e.data));
   };
   worker.postMessage({
     source: code.value,

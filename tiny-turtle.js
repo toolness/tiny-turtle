@@ -14,11 +14,6 @@ function TinyTurtle(canvas) {
     rotation = (rotation + deg) % 360;
     if (rotation < 0) rotation += 360;
   };
-  var move = function(distance) {
-    var radians = 2 * Math.PI * (rotation / 360);
-    position.x += Math.cos(radians) * distance;
-    position.y += Math.sin(radians) * distance;
-  };
 
   self.canvas = canvas;
   self.penStyle = 'black';
@@ -26,15 +21,12 @@ function TinyTurtle(canvas) {
   self.penUp = function() { isPenDown = false; return self; };
   self.penDown = function() { isPenDown = true; return self; };
   self.forward = self.fd = function(distance) {
-    if (!isPenDown) { move(distance); return self; }
-    var ctx = canvas.getContext('2d');
-    ctx.strokeStyle = self.penStyle;
-    ctx.lineWidth = self.penWidth;
-    ctx.beginPath();
-    ctx.moveTo(position.x, position.y);
-    move(distance);
-    ctx.lineTo(position.x, position.y);
-    ctx.stroke();
+    var origX = position.x, origY = position.y;
+    var radians = 2 * Math.PI * (rotation / 360);
+    position.x += Math.cos(radians) * distance;
+    position.y += Math.sin(radians) * distance;
+    if (isPenDown) TinyTurtle.drawLine(canvas, self.penStyle, self.penWidth,
+                                       origX, origY, position.x, position.y);
     return self;
   };
   self.left = self.lt = function(deg) { rotate(-deg); return self; };
@@ -48,3 +40,13 @@ function TinyTurtle(canvas) {
 
   return self;
 }
+
+TinyTurtle.drawLine = function(canvas, style, width, x1, y1, x2, y2) {
+  var ctx = canvas.getContext('2d');
+  ctx.strokeStyle = style;
+  ctx.lineWidth = width;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+};
