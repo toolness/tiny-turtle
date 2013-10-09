@@ -95,7 +95,7 @@ Safari 6 (desktop and iOS), Chrome 30, and Firefox 24.
 
 ## License
 
-Public Domain [CC0 1.0 Universal](cczero).
+Public Domain [CC0 1.0 Universal][cczero].
 
   [Turtle Graphics]: http://en.wikipedia.org/wiki/Turtle_graphics
   [Canvas element]: http://en.wikipedia.org/wiki/Canvas_element
