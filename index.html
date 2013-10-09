@@ -29,7 +29,13 @@ canvas {
 <h1>TinyTurtle Lab</h1>
 <canvas id="canvas" width="200" height="200"></canvas>
 <div id="error"></div>
-<textarea id="code" rows="25" cols="50">function box(length) {
+<textarea id="code" rows="25" cols="50"></textarea>
+<div id="timeout-msg" style="display: none">
+  Your code has taken too long to execute. Perhaps it contains
+  an infinite loop?
+</div>
+<script id="sample" type="javascript/sample-code">
+function box(length) {
   for (var i = 0; i < 4; i++) {
     forward(length);
     right(90);
@@ -42,11 +48,7 @@ left(10);
 box(80);
 left(10);
 box(70);
-</textarea>
-<div id="timeout-msg" style="display: none">
-  Your code has taken too long to execute. Perhaps it contains
-  an infinite loop?
-</div>
+</script>
 <script src="tiny-turtle.js"></script>
 <script>
 var $ = document.querySelector.bind(document);
@@ -61,6 +63,7 @@ var error = $("#error");
 var RENDER_DELAY_MS = 100;
 var WORKER_TIMEOUT_MS = 2000;
 var WORKER_TIMEOUT_MSG = $("#timeout-msg").textContent;
+var SAMPLE_JS = $("#sample").textContent.trim();
 
 function queueRendering() {
   clearTimeout(renderDelayTimeout);
@@ -121,6 +124,7 @@ function render() {
   }, WORKER_TIMEOUT_MS);
 }
 
+if (!code.value) code.value = SAMPLE_JS;
 render();
 code.onkeyup = code.onchange = queueRendering;
 </script>
