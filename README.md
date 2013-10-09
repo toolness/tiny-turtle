@@ -88,8 +88,18 @@ t.left 10
 t.box 70
 ```
 
+## Supported Browsers
+
+This code has been tested on Internet Explorer 10,
+Safari 6 (desktop and iOS), Chrome 30, and Firefox 24.
+
+## License
+
+Public Domain [CC0 1.0 Universal](cczero).
+
   [Turtle Graphics]: http://en.wikipedia.org/wiki/Turtle_graphics
   [Canvas element]: http://en.wikipedia.org/wiki/Canvas_element
   [Thimble]: https://thimble.webmaker.org/
   [jsbin]: http://jsbin.com/
   [CoffeeScript]: http://coffeescript.org/
+  [cczero]: http://creativecommons.org/publicdomain/zero/1.0/
