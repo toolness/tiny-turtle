@@ -29,11 +29,12 @@ canvas {
 <h1>TinyTurtle Lab</h1>
 <canvas id="canvas" width="200" height="200"></canvas>
 <div id="error"></div>
-<textarea id="code" rows="25" cols="50"></textarea>
+<textarea id="code" rows="20" cols="50"></textarea>
 <div id="timeout-msg" style="display: none">
   Your code has taken too long to execute. Perhaps it contains
   an infinite loop?
 </div>
+<button onclick="TogetherJS(this); return false;">Start TogetherJS</button>
 <script id="sample" type="javascript/sample-code">
 function box(length) {
   for (var i = 0; i < 4; i++) {
@@ -128,3 +129,4 @@ if (!code.value) code.value = SAMPLE_JS;
 render();
 code.onkeyup = code.onchange = queueRendering;
 </script>
+<script src="https://togetherjs.com/togetherjs-min.js"></script>
