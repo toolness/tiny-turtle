@@ -9,10 +9,26 @@ canvas {
 #code {
   display: block;
 }
+
+#error {
+  background: salmon;
+  min-height: 2em;
+  /* Errors can take some time to fade in b/c we don't want to
+   * needlessly distract the user. */
+  transition: opacity 1s 0.25s;
+}
+
+#error:not(.shown) {
+  opacity: 0;
+  /* Errors should disappear instantaneously to let the user know
+   * everything is okay now. */
+  transition: opacity 0.25s 0.01s;
+}
 </style>
 <a href="https://github.com/toolness/tiny-turtle"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 <h1>TinyTurtle Lab</h1>
 <canvas id="canvas" width="200" height="200"></canvas>
+<div id="error"></div>
 <textarea id="code" rows="25" cols="50">function box(length) {
   for (var i = 0; i < 4; i++) {
     forward(length);
@@ -33,44 +49,65 @@ var $ = document.querySelector.bind(document);
 var worker;
 var source;
 var renderTimeout;
+var workerTimeout;
 var code = $("#code");
 var canvas = $("#canvas");
+var error = $("#error");
 
 function queueRendering() {
   clearTimeout(renderTimeout);
   renderTimeout = setTimeout(render, 100);
 }
 
+function killWorker() {
+  if (!worker) return;
+  clearTimeout(workerTimeout);
+  worker.terminate();
+  worker = null;
+}
+
 function render() {
   var lines = [];
-  var drawLines = function() {
+  var finish = function(err) {
+    killWorker();
+    if (err) {
+      error.classList.add("shown");
+      error.textContent = err.message;
+      // If nothing was displayed, don't draw an empty canvas, b/c we don't
+      // want to unnecessarily distract the user if they're in the middle
+      // of typing.
+      if (!lines.length) return;
+      // Otherwise, show what was drawn before the error as a debugging
+      // aid.
+    } else {
+      // Note that we would just use classList.toggle() with !!err as
+      // the second arg, but it appears to be broken in IE10.
+      error.classList.remove("shown");
+    }
     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
     lines.forEach(function(line) {
       TinyTurtle.drawLine.apply(TinyTurtle, [canvas].concat(line));
     });
-  }
+  };
 
   if (code.value == source) return;
   source = code.value;
-  if (worker) worker.terminate();
+  killWorker();
   worker = new Worker("index.worker.js");
   worker.onmessage = function(e) {
     var data = e.data;
     if (data.msg == 'line')
       lines.push(data.args)
     else if (data.msg == 'done')
-      drawLines();
+      finish();
   };
-  worker.onerror = function(e) {
-    if (lines.length) drawLines();
-    // An error will already be logged to the console by the browser.
-  };
+  worker.onerror = finish;
   worker.postMessage({
     source: code.value,
     height: canvas.height,
     width: canvas.width
   });
-  setTimeout(worker.terminate.bind(worker), 5000);
+  workerTimeout = setTimeout(finish.bind(null, new Error("timeout")), 5000);
 }
 
 render();
