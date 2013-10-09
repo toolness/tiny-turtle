@@ -43,20 +43,28 @@ box(80);
 left(10);
 box(70);
 </textarea>
+<div id="timeout-msg" style="display: none">
+  Your code has taken too long to execute. Perhaps it contains
+  an infinite loop?
+</div>
 <script src="tiny-turtle.js"></script>
 <script>
 var $ = document.querySelector.bind(document);
 var worker;
 var source;
-var renderTimeout;
+var renderDelayTimeout;
 var workerTimeout;
 var code = $("#code");
 var canvas = $("#canvas");
 var error = $("#error");
 
+var RENDER_DELAY_MS = 100;
+var WORKER_TIMEOUT_MS = 2000;
+var WORKER_TIMEOUT_MSG = $("#timeout-msg").textContent;
+
 function queueRendering() {
-  clearTimeout(renderTimeout);
-  renderTimeout = setTimeout(render, 100);
+  clearTimeout(renderDelayTimeout);
+  renderDelayTimeout = setTimeout(render, RENDER_DELAY_MS);
 }
 
 function killWorker() {
@@ -66,29 +74,30 @@ function killWorker() {
   worker = null;
 }
 
+function finishWorker(lines, err) {
+  killWorker();
+  if (err) {
+    error.classList.add("shown");
+    error.textContent = err.message;
+    // If nothing was displayed, don't draw an empty canvas, b/c we don't
+    // want to unnecessarily distract the user if they're in the middle
+    // of typing.
+    if (!lines.length) return;
+    // Otherwise, show what was drawn before the error as a debugging
+    // aid.
+  } else {
+    // Note that we would just use classList.toggle() with !!err as
+    // the second arg, but it appears to be broken in IE10.
+    error.classList.remove("shown");
+  }
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  lines.forEach(function(line) {
+    TinyTurtle.drawLine.apply(TinyTurtle, [canvas].concat(line));
+  });
+}
+
 function render() {
   var lines = [];
-  var finish = function(err) {
-    killWorker();
-    if (err) {
-      error.classList.add("shown");
-      error.textContent = err.message;
-      // If nothing was displayed, don't draw an empty canvas, b/c we don't
-      // want to unnecessarily distract the user if they're in the middle
-      // of typing.
-      if (!lines.length) return;
-      // Otherwise, show what was drawn before the error as a debugging
-      // aid.
-    } else {
-      // Note that we would just use classList.toggle() with !!err as
-      // the second arg, but it appears to be broken in IE10.
-      error.classList.remove("shown");
-    }
-    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-    lines.forEach(function(line) {
-      TinyTurtle.drawLine.apply(TinyTurtle, [canvas].concat(line));
-    });
-  };
 
   if (code.value == source) return;
   source = code.value;
@@ -99,15 +108,17 @@ function render() {
     if (data.msg == 'line')
       lines.push(data.args)
     else if (data.msg == 'done')
-      finish();
+      finishWorker(lines, null);
   };
-  worker.onerror = finish;
+  worker.onerror = finishWorker.bind(null, lines);
   worker.postMessage({
     source: code.value,
     height: canvas.height,
     width: canvas.width
   });
-  workerTimeout = setTimeout(finish.bind(null, new Error("timeout")), 5000);
+  workerTimeout = setTimeout(function() {
+    finishWorker(lines, new Error(WORKER_TIMEOUT_MSG));
+  }, WORKER_TIMEOUT_MS);
 }
 
 render();
