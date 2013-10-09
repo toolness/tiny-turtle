@@ -42,14 +42,28 @@ function queueRendering() {
 }
 
 function render() {
+  var lines = [];
+  var drawLines = function() {
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+    lines.forEach(function(line) {
+      TinyTurtle.drawLine.apply(TinyTurtle, [canvas].concat(line));
+    });
+  }
+
   if (code.value == source) return;
   source = code.value;
-  var ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (worker) worker.terminate();
   worker = new Worker("index.worker.js");
   worker.onmessage = function(e) {
-    TinyTurtle.drawLine.apply(TinyTurtle, [canvas].concat(e.data));
+    var data = e.data;
+    if (data.msg == 'line')
+      lines.push(data.args)
+    else if (data.msg == 'done')
+      drawLines();
+  };
+  worker.onerror = function(e) {
+    if (lines.length) drawLines();
+    // An error will already be logged to the console by the browser.
   };
   worker.postMessage({
     source: code.value,
