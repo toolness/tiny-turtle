@@ -25,8 +25,14 @@ function TinyTurtle(canvas) {
     var radians = 2 * Math.PI * (rotation / 360);
     position.x += Math.cos(radians) * distance;
     position.y += Math.sin(radians) * distance;
-    if (isPenDown) TinyTurtle.drawLine(canvas, self.penStyle, self.penWidth,
-                                       origX, origY, position.x, position.y);
+    if (!isPenDown) return;
+    var ctx = canvas.getContext('2d');
+    ctx.strokeStyle = self.penStyle;
+    ctx.lineWidth = self.penWidth;
+    ctx.beginPath();
+    ctx.moveTo(origX, origY);
+    ctx.lineTo(position.x, position.y);
+    ctx.stroke();
     return self;
   };
   self.left = self.lt = function(deg) { rotate(-deg); return self; };
@@ -40,13 +46,3 @@ function TinyTurtle(canvas) {
 
   return self;
 }
-
-TinyTurtle.drawLine = function(canvas, style, width, x1, y1, x2, y2) {
-  var ctx = canvas.getContext('2d');
-  ctx.strokeStyle = style;
-  ctx.lineWidth = width;
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
-  ctx.stroke();
-};
