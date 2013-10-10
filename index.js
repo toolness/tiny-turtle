@@ -84,22 +84,21 @@ if (typeof(window) == 'undefined') (function startInWebWorker() {
     postMessage({msg: 'done'});
   };
 })(); else (function startInWebPage() {
-  var $ = document.querySelector.bind(document);
-
   var TURTLE_WIDTH = 10;
   var TURTLE_HEIGHT = 10;
   var RENDER_DELAY_MS = 100;
   var WORKER_TIMEOUT_MS = 2000;
-  var WORKER_TIMEOUT_MSG = $("#timeout-msg").textContent;
-  var SAMPLE_JS = $("#sample").textContent.trim();
 
-  function Lab(parent, defaultContent) {
+  function Lab(parent, options) {
+    options = options || {};
     var $ = parent.querySelector.bind(parent);
     var turtle;
     var worker;
     var source;
     var renderDelayTimeout;
     var workerTimeout;
+    var defaultContent = options.defaultContent || '';
+    var workerTimeoutMsg = options.workerTimeoutMsg || 'timeout';
     var code = $(".code");
     var canvas = $(".canvas");
     var error = $(".error");
@@ -162,7 +161,7 @@ if (typeof(window) == 'undefined') (function startInWebWorker() {
         width: canvas.width
       });
       workerTimeout = setTimeout(function() {
-        finishWorker(cmds, new Error(WORKER_TIMEOUT_MSG));
+        finishWorker(cmds, new Error(workerTimeoutMsg));
       }, WORKER_TIMEOUT_MS);
     }
 
@@ -172,5 +171,5 @@ if (typeof(window) == 'undefined') (function startInWebWorker() {
     code.addEventListener('change', queueRendering, false);
   }
 
-  Lab($("#lab"), SAMPLE_JS);
+  window.Lab = Lab;
 })();
