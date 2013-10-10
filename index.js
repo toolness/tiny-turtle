@@ -119,7 +119,8 @@ if (typeof(window) == 'undefined') (function startInWebWorker() {
       killWorker();
       if (err) {
         error.classList.add("shown");
-        error.textContent = "Line " + err.lineno + ": " + err.message;
+        error.textContent = (err.lineno ? "Line " + err.lineno + ": " : '') +
+                            err.message;
         // If nothing was displayed, don't draw an empty canvas, b/c we don't
         // want to unnecessarily distract the user if they're in the middle
         // of typing.
