@@ -1,3 +1,9 @@
+var evaluate = function(code) { eval(code); };
+
+// The above code should always be the very first line of this file, as
+// exceptions thrown from the code evaluated in it will be relative to
+// the line the eval statement is on (in some browsers, at least).
+
 var Validation = {
   properties: ['penStyle', 'penWidth'],
   methods: ['penUp', 'penDown', 'forward', 'fd', 'left', 'lt',
@@ -74,7 +80,7 @@ if (typeof(window) == 'undefined') (function startInWebWorker() {
     TinyTurtle.call(self, fakeCanvas);
     interceptMethods(self);
     interceptProperties(self);
-    eval(e.data.source);
+    evaluate(e.data.source);
     postMessage({msg: 'done'});
   };
 })(); else (function startInWebPage() {
@@ -114,7 +120,7 @@ if (typeof(window) == 'undefined') (function startInWebWorker() {
       killWorker();
       if (err) {
         error.classList.add("shown");
-        error.textContent = err.message;
+        error.textContent = "Line " + err.lineno + ": " + err.message;
         // If nothing was displayed, don't draw an empty canvas, b/c we don't
         // want to unnecessarily distract the user if they're in the middle
         // of typing.
