@@ -1,7 +1,7 @@
 var Validation = {
   properties: ['penStyle', 'penWidth'],
   methods: ['penUp', 'penDown', 'forward', 'fd', 'left', 'lt',
-            'right', 'rt'],
+            'right', 'rt', 'stamp'],
   isValidType: function(value) {
     return ~['string', 'number'].indexOf(typeof(value));
   },
@@ -63,7 +63,13 @@ if (typeof(window) == 'undefined') (function startInWebWorker() {
       beginPath: noop,
       moveTo: noop,
       lineTo: noop,
-      stroke: noop
+      stroke: noop,
+      save: noop,
+      restore: noop,
+      fill: noop,
+      translate: noop,
+      rotate: noop,
+      closePath: noop
     };
     TinyTurtle.call(self, fakeCanvas);
     interceptMethods(self);
@@ -104,22 +110,6 @@ if (typeof(window) == 'undefined') (function startInWebWorker() {
       worker = null;
     }
 
-    function drawTurtle(turtle) {
-      var ctx = turtle.canvas.getContext('2d');
-      ctx.save();
-      ctx.strokeStyle = ctx.fillStyle = turtle.penStyle;
-      ctx.lineWidth = turtle.penWidth;
-      ctx.translate(turtle.position.x, turtle.position.y);
-      ctx.rotate(-2 * Math.PI * ((270-turtle.rotation) / 360));
-      ctx.beginPath();
-      ctx.moveTo(-TURTLE_WIDTH / 2, 0);
-      ctx.lineTo(0, -TURTLE_HEIGHT);
-      ctx.lineTo(TURTLE_WIDTH / 2, 0);
-      ctx.lineTo(-TURTLE_WIDTH / 2, 0);
-      turtle.pen == 'up' ? ctx.stroke() : ctx.fill();
-      ctx.restore();
-    }
-
     function finishWorker(cmds, err) {
       killWorker();
       if (err) {
@@ -143,7 +133,6 @@ if (typeof(window) == 'undefined') (function startInWebWorker() {
         else if (cmd.msg == 'turtle-methodcall')
           Validation.callMethod(turtle, cmd.method, cmd.args);
       });
-      drawTurtle(turtle);
     }
 
     function render() {
