@@ -10,6 +10,11 @@ function TinyTurtle(canvas) {
     y: canvas.height / 2 + 0.5
   };
   var isPenDown = true;
+  var radians = function(r) {return 2 * Math.PI * (r / 360) };
+  var triangle = function(ctx, base, height) {
+    ctx.beginPath(); ctx.moveTo(0, -base / 2); ctx.lineTo(height, 0);
+    ctx.lineTo(0, base / 2); ctx.closePath();
+  };
   var rotate = function(deg) {
     rotation = (rotation + deg) % 360;
     if (rotation < 0) rotation += 360;
@@ -22,9 +27,8 @@ function TinyTurtle(canvas) {
   self.penDown = function() { isPenDown = true; return self; };
   self.forward = self.fd = function(distance) {
     var origX = position.x, origY = position.y;
-    var radians = 2 * Math.PI * (rotation / 360);
-    position.x += Math.cos(radians) * distance;
-    position.y -= Math.sin(radians) * distance;
+    position.x += Math.cos(radians(rotation)) * distance;
+    position.y -= Math.sin(radians(rotation)) * distance;
     if (!isPenDown) return;
     var ctx = canvas.getContext('2d');
     ctx.strokeStyle = self.penStyle;
@@ -36,16 +40,13 @@ function TinyTurtle(canvas) {
     return self;
   };
   self.stamp = function(size) {
-    size = size || 10;
     var ctx = self.canvas.getContext('2d');
     ctx.save();
     ctx.strokeStyle = ctx.fillStyle = self.penStyle;
     ctx.lineWidth = self.penWidth;
     ctx.translate(position.x, position.y);
-    ctx.rotate(-2 * Math.PI * (rotation / 360));
-    ctx.beginPath();
-    ctx.moveTo(0, -size / 2);
-    ctx.lineTo(size * 1.5, 0); ctx.lineTo(0, size / 2); ctx.closePath();
+    ctx.rotate(-radians(rotation));
+    triangle(ctx, size || 10, (size || 10) * 1.5);
     isPenDown ? ctx.fill() : ctx.stroke();
     ctx.restore();
     return self;
