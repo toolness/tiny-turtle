@@ -2,17 +2,64 @@
 <meta charset="utf-8">
 <title>TinyTurtle Lab</title>
 <style>
+* {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+html {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: smaller;
+}
+
+a {
+  color: inherit;
+}
+
+a:hover {
+  background: yellow;
+}
+
 canvas {
   border: 1px dotted gray;
 }
 
+#lab {
+  position: relative;
+  height: 280px;
+}
+
+.canvas {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.code:focus {
+  outline: 0;
+}
+
 .code {
-  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% - 260px);
+  padding: 4px;
+  height: 250px;
+  resize: none;
+  border: none;
+  background: #f0f0f0;
+  font-family: "Lucida Console", monospace;
+  font-size: small;
 }
 
 .error {
-  background: pink;
-  min-height: 2em;
+  position: absolute;
+  top: 252px;
+  left: 0;
+  right: 0;
+  color: red;
   /* Errors can take some time to fade in b/c we don't want to
    * needlessly distract the user. */
   transition: opacity 1s 0.25s;
@@ -24,19 +71,27 @@ canvas {
    * everything is okay now. */
   transition: opacity 0.25s 0.01s;
 }
+
+footer {
+  text-align: center;
+  font-size: smaller;
+}
 </style>
-<a href="https://github.com/toolness/tiny-turtle"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 <h1>TinyTurtle Lab</h1>
 <div id="lab">
-  <canvas class="canvas" width="200" height="200"></canvas>
-  <div class="error"></div>
-  <textarea class="code" rows="20" cols="50"></textarea>
+  <canvas class="canvas" width="250" height="250"></canvas>
+  <textarea class="code" spellcheck="false" autofocus></textarea>
+  <div class="error">error goes here</div>
 </div>
 <div id="timeout-msg" style="display: none">
   Your code has taken too long to execute. Perhaps it contains
   an infinite loop?
 </div>
-<button onclick="TogetherJS(this); return false;">Start TogetherJS</button>
+<footer>
+  [ <a href="http://github.com/toolness/tiny-turtle">GitHub</a>
+    | <a id="togetherjs" href="#">Invite a Friend</a>
+  ]
+</footer>
 <script id="sample" type="javascript/sample-code">
 function box(length) {
   for (var i = 0; i < 4; i++) {
@@ -57,9 +112,15 @@ stamp();
 <script src="index.js"></script>
 <script>
 var $ = document.querySelector.bind(document);
+
 Lab($("#lab"), {
   defaultContent: $("#sample").textContent.trim(),
   workerTimeoutMsg: $("#timeout-msg").textContent
 });
+
+$("#togetherjs").addEventListener('click', function(e) {
+  e.preventDefault();
+  TogetherJS(this);
+}, false);
 </script>
-<script src="https://togetherjs.com/togetherjs-min.js"></script>
+<script async src="https://togetherjs.com/togetherjs-min.js"></script>
