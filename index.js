@@ -74,6 +74,8 @@ if (typeof(window) == 'undefined') (function startInWebWorker() {
 })(); else (function startInWebPage() {
   var $ = document.querySelector.bind(document);
 
+  var TURTLE_WIDTH = 10;
+  var TURTLE_HEIGHT = 10;
   var RENDER_DELAY_MS = 100;
   var WORKER_TIMEOUT_MS = 2000;
   var WORKER_TIMEOUT_MSG = $("#timeout-msg").textContent;
@@ -102,6 +104,22 @@ if (typeof(window) == 'undefined') (function startInWebWorker() {
       worker = null;
     }
 
+    function drawTurtle(turtle) {
+      var ctx = turtle.canvas.getContext('2d');
+      ctx.save();
+      ctx.strokeStyle = ctx.fillStyle = turtle.penStyle;
+      ctx.lineWidth = turtle.penWidth;
+      ctx.translate(turtle.position.x, turtle.position.y);
+      ctx.rotate(-2 * Math.PI * ((270-turtle.rotation) / 360));
+      ctx.beginPath();
+      ctx.moveTo(-TURTLE_WIDTH / 2, 0);
+      ctx.lineTo(0, -TURTLE_HEIGHT);
+      ctx.lineTo(TURTLE_WIDTH / 2, 0);
+      ctx.lineTo(-TURTLE_WIDTH / 2, 0);
+      turtle.pen == 'up' ? ctx.stroke() : ctx.fill();
+      ctx.restore();
+    }
+
     function finishWorker(cmds, err) {
       killWorker();
       if (err) {
@@ -125,6 +143,7 @@ if (typeof(window) == 'undefined') (function startInWebWorker() {
         else if (cmd.msg == 'turtle-methodcall')
           Validation.callMethod(turtle, cmd.method, cmd.args);
       });
+      drawTurtle(turtle);
     }
 
     function render() {
