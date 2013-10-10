@@ -1,5 +1,5 @@
 **TinyTurtle** is a minimalist [Turtle Graphics][] implementation using
-the [Canvas element][], consisting of about 50 lines of JavaScript code.
+the [Canvas element][], consisting of about 60 lines of JavaScript code.
 
 The library is intended for use in teaching scenarios where learners
 have access to a simple HTML editing environment such as [Thimble][] or
