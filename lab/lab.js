@@ -35,6 +35,7 @@ var Lab = (function(Validation, TinyTurtle, PNGBaker) {
 
     function bakeCanvas() {
       var baker = new PNGBaker(canvas.toDataURL());
+      var URL = window.URL || window.webkitURL;
       baker.textChunks['tiny-turtle-source'] = encodeURIComponent(source);
       if (bakedImageURL) URL.revokeObjectURL(bakedImageURL);
       canvasImage.src = bakedImageURL = URL.createObjectURL(baker.toBlob());
