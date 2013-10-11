@@ -1,89 +1,4 @@
-var evaluate = function(code) { eval(code); };
-
-// The above code should always be the very first line of this file, as
-// exceptions thrown from the code evaluated in it will be relative to
-// the line the eval statement is on (in some browsers, at least).
-
-var Validation = {
-  properties: ['penStyle', 'penWidth'],
-  methods: ['penUp', 'penDown', 'forward', 'fd', 'left', 'lt',
-            'right', 'rt', 'stamp'],
-  isValidType: function(value) {
-    return ~['string', 'number'].indexOf(typeof(value));
-  },
-  setProperty: function(obj, property, val) {
-    if (!~this.properties.indexOf(property)) return;
-    if (!this.isValidType(val)) return;
-    obj[property] = val;
-  },
-  callMethod: function(obj, method, args) {
-    if (!~this.methods.indexOf(method)) return;
-    for (var i = 0; i < args.length; i++)
-      if (!this.isValidType(args[i])) return;
-    obj[method].apply(obj, args);
-  }
-};
-
-if (typeof(window) == 'undefined') (function startInWebWorker() {
-  importScripts('tiny-turtle.js');
-
-  function interceptProperties(obj) {
-    Validation.properties.forEach(function(propName) {
-      var value = obj[propName];
-      Object.defineProperty(obj, propName, {
-        get: function() { return value; },
-        set: function(newValue) {
-          value = newValue;
-          postMessage({
-            msg: 'turtle-propset',
-            property: propName,
-            value: value
-          });
-          return value;
-        }
-      });
-    });
-  }
-
-  function interceptMethods(obj) {
-    Validation.methods.forEach(function(methodName) {
-      var method = obj[methodName];
-      obj[methodName] = function() {
-        var retval = method.apply(this, arguments);
-        postMessage({
-          msg: 'turtle-methodcall',
-          method: methodName,
-          args: [].slice.call(arguments)
-        });
-        return retval;
-      };
-    });
-  }
-
-  onmessage = function(e) {
-    var noop = function() {} 
-    var fakeCanvas = {
-      width: e.data.width,
-      height: e.data.height,
-      getContext: function() { return this; },
-      beginPath: noop,
-      moveTo: noop,
-      lineTo: noop,
-      stroke: noop,
-      save: noop,
-      restore: noop,
-      fill: noop,
-      translate: noop,
-      rotate: noop,
-      closePath: noop
-    };
-    TinyTurtle.call(self, fakeCanvas);
-    interceptMethods(self);
-    interceptProperties(self);
-    evaluate(e.data.source);
-    postMessage({msg: 'done'});
-  };
-})(); else (function startInWebPage() {
+var Lab = (function(Validation, TinyTurtle) {
   var TURTLE_WIDTH = 10;
   var TURTLE_HEIGHT = 10;
   var RENDER_DELAY_MS = 100;
@@ -98,6 +13,7 @@ if (typeof(window) == 'undefined') (function startInWebWorker() {
     var renderDelayTimeout;
     var workerTimeout;
     var defaultContent = options.defaultContent || '';
+    var workerURL = options.workerURL || 'worker.js';
     var workerTimeoutMsg = options.workerTimeoutMsg || 'timeout';
     var code = $(".code");
     var canvas = $(".canvas");
@@ -148,7 +64,7 @@ if (typeof(window) == 'undefined') (function startInWebWorker() {
       source = code.value;
       killWorker();
       turtle = new TinyTurtle(canvas);
-      worker = new Worker("index.js");
+      worker = new Worker(workerURL);
       worker.onmessage = function(e) {
         if (e.data.msg == 'done')
           finishWorker(cmds, null);
@@ -172,5 +88,5 @@ if (typeof(window) == 'undefined') (function startInWebWorker() {
     code.addEventListener('change', queueRendering, false);
   }
 
-  window.Lab = Lab;
-})();
+  return Lab;
+})(Validation, TinyTurtle);

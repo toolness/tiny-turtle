@@ -115,11 +115,13 @@ box(70);
 stamp();
 </script>
 <script src="tiny-turtle.js"></script>
-<script src="index.js"></script>
+<script src="lab/validation.js"></script>
+<script src="lab/lab.js"></script>
 <script>
 var $ = document.querySelector.bind(document);
 
 Lab($("#lab"), {
+  workerURL: 'lab/worker.js',
   defaultContent: $("#sample").textContent.trim(),
   workerTimeoutMsg: $("#timeout-msg").textContent
 });
