@@ -1,4 +1,4 @@
-var Lab = (function(Validation, TinyTurtle) {
+var Lab = (function(Validation, TinyTurtle, PNGBaker) {
   var TURTLE_WIDTH = 10;
   var TURTLE_HEIGHT = 10;
   var RENDER_DELAY_MS = 100;
@@ -12,11 +12,13 @@ var Lab = (function(Validation, TinyTurtle) {
     var source;
     var renderDelayTimeout;
     var workerTimeout;
+    var bakedImageURL;
     var defaultContent = options.defaultContent || '';
     var workerURL = options.workerURL || 'worker.js';
     var workerTimeoutMsg = options.workerTimeoutMsg || 'timeout';
     var code = $(".code");
-    var canvas = $(".canvas");
+    var canvasImage = $(".canvas");
+    var canvas = document.createElement('canvas');
     var error = $(".error");
 
     function queueRendering() {
@@ -29,6 +31,23 @@ var Lab = (function(Validation, TinyTurtle) {
       clearTimeout(workerTimeout);
       worker.terminate();
       worker = null;
+    }
+
+    function bakeCanvas() {
+      var baker = new PNGBaker(canvas.toDataURL());
+      baker.textChunks['tiny-turtle-source'] = encodeURIComponent(source);
+      if (bakedImageURL) URL.revokeObjectURL(bakedImageURL);
+      canvasImage.src = bakedImageURL = URL.createObjectURL(baker.toBlob());
+    }
+
+    function drawCmds(cmds) {
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+      cmds.forEach(function(cmd) {
+        if (cmd.msg == 'turtle-propset')
+          Validation.setProperty(turtle, cmd.property, cmd.value);
+        else if (cmd.msg == 'turtle-methodcall')
+          Validation.callMethod(turtle, cmd.method, cmd.args);
+      });
     }
 
     function finishWorker(cmds, err) {
@@ -48,13 +67,8 @@ var Lab = (function(Validation, TinyTurtle) {
         // the second arg, but it appears to be broken in IE10.
         error.classList.remove("shown");
       }
-      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-      cmds.forEach(function(cmd) {
-        if (cmd.msg == 'turtle-propset')
-          Validation.setProperty(turtle, cmd.property, cmd.value);
-        else if (cmd.msg == 'turtle-methodcall')
-          Validation.callMethod(turtle, cmd.method, cmd.args);
-      });
+      drawCmds(cmds);
+      bakeCanvas();
     }
 
     function render() {
@@ -82,6 +96,36 @@ var Lab = (function(Validation, TinyTurtle) {
       }, WORKER_TIMEOUT_MS);
     }
 
+    function onDragEvent(e) {
+      if (e.type == 'drop') {
+        if (e.dataTransfer.files.length) {
+          var file = e.dataTransfer.files[0];
+          if (file.type == 'image/png') {
+            var reader = new FileReader();
+            reader.onloadend = function() {
+              var baker = new PNGBaker(reader.result);
+              var bakedSource = baker.textChunks['tiny-turtle-source'];
+              if (bakedSource) {
+                code.value = decodeURIComponent(bakedSource);
+                render();
+              }
+            };
+            reader.readAsArrayBuffer(file);
+            e.stopPropagation();
+            e.preventDefault();
+          }
+        }
+        return;
+      } else {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    }
+
+    ['dragenter', 'dragleave', 'dragover', 'drop'].forEach(function(type) {
+      parent.addEventListener(type, onDragEvent);
+    });
+    canvas.width = canvasImage.width; canvas.height = canvasImage.height;
     if (!code.value) code.value = defaultContent;
     render();
     code.addEventListener('keyup', queueRendering, false);
@@ -89,4 +133,4 @@ var Lab = (function(Validation, TinyTurtle) {
   }
 
   return Lab;
-})(Validation, TinyTurtle);
+})(Validation, TinyTurtle, PNGBaker);

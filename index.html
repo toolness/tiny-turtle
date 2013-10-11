@@ -21,10 +21,6 @@ a:hover {
   background: yellow;
 }
 
-canvas {
-  border: 1px dotted gray;
-}
-
 #lab {
   position: relative;
   height: 280px;
@@ -34,6 +30,7 @@ canvas {
   position: absolute;
   top: 0;
   right: 0;
+  border: 1px dotted gray;
 }
 
 .code:focus {
@@ -85,7 +82,7 @@ footer {
 </style>
 <h1>TinyTurtle Lab</h1>
 <div id="lab">
-  <canvas class="canvas" width="250" height="250"></canvas>
+  <img class="canvas" width="250" height="250">
   <textarea class="code" spellcheck="false" autofocus></textarea>
   <div class="error">error goes here</div>
 </div>
@@ -116,6 +113,7 @@ stamp();
 </script>
 <script src="tiny-turtle.js"></script>
 <script src="lab/validation.js"></script>
+<script src="lab/vendor/png-baker.js"></script>
 <script src="lab/lab.js"></script>
 <script>
 var $ = document.querySelector.bind(document);
