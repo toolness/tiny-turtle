@@ -12,12 +12,12 @@ var Lab = (function(Validation, TinyTurtle, PNGBaker) {
     var source;
     var renderDelayTimeout;
     var workerTimeout;
-    var bakedImageURL;
+    var bakedImgURL;
     var defaultContent = options.defaultContent || '';
     var workerURL = options.workerURL || 'worker.js';
     var workerTimeoutMsg = options.workerTimeoutMsg || 'timeout';
     var code = $(".code");
-    var canvasImage = $(".canvas");
+    var canvasImg = $(".canvas");
     var canvas = document.createElement('canvas');
     var error = $(".error");
 
@@ -37,8 +37,9 @@ var Lab = (function(Validation, TinyTurtle, PNGBaker) {
       var baker = new PNGBaker(canvas.toDataURL());
       var URL = window.URL || window.webkitURL;
       baker.textChunks['tiny-turtle-source'] = encodeURIComponent(source);
-      if (bakedImageURL) URL.revokeObjectURL(bakedImageURL);
-      canvasImage.src = bakedImageURL = URL.createObjectURL(baker.toBlob());
+      if (bakedImgURL) URL.revokeObjectURL(bakedImgURL);
+      canvasImg.blob = baker.toBlob();
+      canvasImg.src = bakedImgURL = URL.createObjectURL(canvasImg.blob);
     }
 
     function drawCmds(cmds) {
@@ -126,7 +127,15 @@ var Lab = (function(Validation, TinyTurtle, PNGBaker) {
     ['dragenter', 'dragleave', 'dragover', 'drop'].forEach(function(type) {
       parent.addEventListener(type, onDragEvent);
     });
-    canvas.width = canvasImage.width; canvas.height = canvasImage.height;
+    if (navigator.msSaveOrOpenBlob)
+      // IE10's "Save Picture As..." strips out the tEXt chunks from our
+      // PNG, so we'll override things to provide our own functionality.
+      canvasImg.addEventListener('contextmenu', function(e) {
+        if (!this.blob) return;
+        navigator.msSaveOrOpenBlob(this.blob, 'canvas.png');
+        e.preventDefault();
+      });
+    canvas.width = canvasImg.width; canvas.height = canvasImg.height;
     if (!code.value) code.value = defaultContent;
     render();
     code.addEventListener('keyup', queueRendering, false);
