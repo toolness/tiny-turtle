@@ -89,8 +89,6 @@ footer {
     <div class="error">error goes here</div>
   </div>
   <div class="timeout-msg">
-    Your code has taken too long to execute. Perhaps it contains
-    an infinite loop?
   </div>
 </div>
 <footer>
@@ -127,8 +125,7 @@ function initEditorPane(id, defaultContent) {
   lab.setAttribute('id', id);
   $('#labs').appendChild(lab);
   Lab(lab, {
-    defaultContent: sessionStorage[id] || defaultContent,
-    workerTimeoutMsg: $("#templates .timeout-msg").textContent
+    defaultContent: sessionStorage[id] || defaultContent
   });
   window.addEventListener('unload', function() {
     sessionStorage[id] = lab.querySelector('.code').value;
