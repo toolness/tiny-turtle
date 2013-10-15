@@ -1,4 +1,6 @@
-var Lab = (function(Validation, TinyTurtle, PNGBaker) {
+var Lab = typeof(window) == 'undefined'
+? {}                                         // We're in a web worker.
+: (function(TinyTurtle, PNGBaker) {          // We're in a web page.
   var DEFAULT_CANVAS_SIZE = 250;
   var TURTLE_WIDTH = 10;
   var TURTLE_HEIGHT = 10;
@@ -64,9 +66,9 @@ var Lab = (function(Validation, TinyTurtle, PNGBaker) {
       canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
       cmds.forEach(function(cmd) {
         if (cmd.msg == 'turtle-propset')
-          Validation.setProperty(turtle, cmd.property, cmd.value);
+          Lab.Validation.setProperty(turtle, cmd.property, cmd.value);
         else if (cmd.msg == 'turtle-methodcall')
-          Validation.callMethod(turtle, cmd.method, cmd.args);
+          Lab.Validation.callMethod(turtle, cmd.method, cmd.args);
       });
     }
 
@@ -189,4 +191,24 @@ var Lab = (function(Validation, TinyTurtle, PNGBaker) {
   document.addEventListener("DOMContentLoaded", activateLabs, false);
 
   return Lab;
-})(Validation, TinyTurtle, PNGBaker);
+})(TinyTurtle, PNGBaker);
+
+Lab.Validation = {
+  properties: ['penStyle', 'penWidth'],
+  methods: ['penUp', 'penDown', 'forward', 'fd', 'left', 'lt',
+            'right', 'rt', 'stamp'],
+  isValidType: function(value) {
+    return ~['string', 'number'].indexOf(typeof(value));
+  },
+  setProperty: function(obj, property, val) {
+    if (!~this.properties.indexOf(property)) return;
+    if (!this.isValidType(val)) return;
+    obj[property] = val;
+  },
+  callMethod: function(obj, method, args) {
+    if (!~this.methods.indexOf(method)) return;
+    for (var i = 0; i < args.length; i++)
+      if (!this.isValidType(args[i])) return;
+    obj[method].apply(obj, args);
+  }
+};

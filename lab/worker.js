@@ -4,10 +4,10 @@ var evaluate = function(code) { eval(code); };
 // exceptions thrown from the code evaluated in it will be relative to
 // the line the eval statement is on (in some browsers, at least).
 
-importScripts('validation.js', '../tiny-turtle.js');
+importScripts('../tiny-turtle.js', 'lab.js');
 
 function interceptProperties(obj) {
-  Validation.properties.forEach(function(propName) {
+  Lab.Validation.properties.forEach(function(propName) {
     var value = obj[propName];
     Object.defineProperty(obj, propName, {
       get: function() { return value; },
@@ -25,7 +25,7 @@ function interceptProperties(obj) {
 }
 
 function interceptMethods(obj) {
-  Validation.methods.forEach(function(methodName) {
+  Lab.Validation.methods.forEach(function(methodName) {
     var method = obj[methodName];
     obj[methodName] = function() {
       var retval = method.apply(this, arguments);
