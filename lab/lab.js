@@ -1,4 +1,5 @@
 var Lab = (function(Validation, TinyTurtle, PNGBaker) {
+  var DEFAULT_CANVAS_SIZE = 250;
   var TURTLE_WIDTH = 10;
   var TURTLE_HEIGHT = 10;
   var RENDER_DELAY_MS = 100;
@@ -15,8 +16,15 @@ var Lab = (function(Validation, TinyTurtle, PNGBaker) {
     return myURL.split('/').slice(0, -1).join('/') + '/';
   })();
 
-  function Lab(parent, options) {
-    options = options || {};
+  function activateLabs() {
+    var labs = document.querySelectorAll('div[data-role="lab"]');
+    for (var i = 0; i < labs.length; i++)
+      new Lab(labs[i]);
+  }
+
+  function Lab(parent) {
+    if (!parent) parent = document.createElement('div');
+
     var $ = parent.querySelector.bind(parent);
     var turtle;
     var worker;
@@ -24,12 +32,12 @@ var Lab = (function(Validation, TinyTurtle, PNGBaker) {
     var renderDelayTimeout;
     var workerTimeout;
     var bakedImgURL;
-    var defaultContent = options.defaultContent || '';
     var workerURL = baseURL + 'worker.js';
     var code = $(".code");
     var canvasImg = $(".canvas");
     var canvas = document.createElement('canvas');
     var error = $(".error");
+    var script = $("script");
 
     function queueRendering() {
       clearTimeout(renderDelayTimeout);
@@ -134,6 +142,27 @@ var Lab = (function(Validation, TinyTurtle, PNGBaker) {
       }
     }
 
+    parent.setAttribute('data-role', 'lab');
+    parent.classList.add('lab');
+    if (!canvasImg) {
+      canvasImg = document.createElement('img');
+      canvasImg.classList.add('canvas');
+      canvasImg.width = canvasImg.height = DEFAULT_CANVAS_SIZE;
+      parent.appendChild(canvasImg);
+    }
+    if (!code) {
+      code = document.createElement('textarea');
+      code.classList.add('code');
+      code.setAttribute('spellcheck', 'false');
+      parent.appendChild(code);
+    }
+    if (script) code.value = script.textContent.trim();
+    if (!error) {
+      error = document.createElement('div');
+      error.classList.add('error');
+      parent.appendChild(error);
+    }
+
     ['dragenter', 'dragleave', 'dragover', 'drop'].forEach(function(type) {
       parent.addEventListener(type, onDragEvent);
     });
@@ -146,11 +175,18 @@ var Lab = (function(Validation, TinyTurtle, PNGBaker) {
         e.preventDefault();
       });
     canvas.width = canvasImg.width; canvas.height = canvasImg.height;
-    if (!code.value) code.value = defaultContent;
-    render();
     code.addEventListener('keyup', queueRendering, false);
     code.addEventListener('change', queueRendering, false);
+
+    this.render = render;
+    this.code = code;
+    this.el = parent;
+    parent.lab = this;
+
+    render();
   }
+
+  document.addEventListener("DOMContentLoaded", activateLabs, false);
 
   return Lab;
 })(Validation, TinyTurtle, PNGBaker);

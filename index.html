@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <title>TinyTurtle Lab</title>
+<link href="lab/lab.css" rel="stylesheet">
 <style>
 * {
   box-sizing: border-box;
@@ -21,60 +22,6 @@ a:hover {
   background: yellow;
 }
 
-.lab {
-  position: relative;
-  height: 280px;
-}
-
-.canvas {
-  position: absolute;
-  top: 0;
-  right: 0;
-  border: 1px dotted gray;
-}
-
-.code:focus {
-  outline: 0;
-}
-
-.code {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: -webkit-calc(100% - 260px);
-  width: -moz-calc(100% - 260px);
-  width: calc(100% - 260px);
-  padding: 4px;
-  height: 250px;
-  resize: none;
-  border: none;
-  background: #f0f0f0;
-  font-family: Menlo, Monaco, "Lucida Console", monospace;
-  font-size: small;
-}
-
-.error {
-  position: absolute;
-  top: 252px;
-  left: 0;
-  right: 0;
-  color: red;
-  /* Errors can take some time to fade in b/c we don't want to
-   * needlessly distract the user. */
-  transition: opacity 1s 0.25s;
-  -moz-transition: opacity 1s 0.25s;
-  -webkit-transition: opacity 1s 0.25s;
-}
-
-.error:not(.shown) {
-  opacity: 0;
-  /* Errors should disappear instantaneously to let the user know
-   * everything is okay now. */
-  transition: opacity 0.25s 0.01s;
-  -moz-transition: opacity 0.25s 0.01s;
-  -webkit-transition: opacity 0.25s 0.01s;
-}
-
 footer {
   text-align: center;
   font-size: smaller;
@@ -82,13 +29,6 @@ footer {
 </style>
 <h1>TinyTurtle Lab</h1>
 <div id="labs"></div>
-<div id="templates" style="display: none">
-  <div class="lab">
-    <img class="canvas" width="250" height="250">
-    <textarea class="code" spellcheck="false"></textarea>
-    <div class="error">error goes here</div>
-  </div>
-</div>
 <footer>
   [ <a href="http://github.com/toolness/tiny-turtle" target="_blank">GitHub</a>
     | <a id="togetherjs" href="#">Invite a Friend</a>
@@ -117,25 +57,24 @@ stamp();
 <script>
 var $ = document.querySelector.bind(document);
 
-function initEditorPane(id, defaultContent) {
-  var lab = $('#templates .lab').cloneNode(true);
+function initLab(id, defaultContent) {
+  var lab = new Lab();
 
-  lab.setAttribute('id', id);
-  $('#labs').appendChild(lab);
-  Lab(lab, {
-    defaultContent: sessionStorage[id] || defaultContent
-  });
+  lab.code.value = sessionStorage[id] || defaultContent;
+  lab.el.setAttribute('id', id);
+  $('#labs').appendChild(lab.el);
+  lab.render();
   window.addEventListener('unload', function() {
-    sessionStorage[id] = lab.querySelector('.code').value;
+    sessionStorage[id] = lab.code.value;
   }, false);
 }
 
-function initEditorPanes() {
+function initLabs() {
   var panes = parseInt((location.search.match(/panes=([1-9])/) || [0,1])[1]);
   var sampleCode = $("#sample").textContent.trim();
 
   for (var i = 0; i < panes; i++)
-    initEditorPane('tinyturtle-lab-' + i, i == 0 ? sampleCode : '');
+    initLab('tinyturtle-lab-' + i, i == 0 ? sampleCode : '');
 }
 
 $("#togetherjs").addEventListener('click', function(e) {
@@ -143,7 +82,6 @@ $("#togetherjs").addEventListener('click', function(e) {
   TogetherJS(this);
 }, false);
 
-initEditorPanes();
-document.querySelectorAll("#labs .lab .code")[0].focus();
+initLabs();
 </script>
 <script async src="https://togetherjs.com/togetherjs-min.js"></script>
