@@ -6,10 +6,6 @@ var Lab = typeof(window) == 'undefined'
   var TURTLE_HEIGHT = 10;
   var RENDER_DELAY_MS = 100;
   var WORKER_TIMEOUT_MS = 2000;
-  var STRINGS = {
-    WORKER_TIMEOUT_MSG: "Your code has taken too long to execute. " +
-                        "Perhaps it contains an infinite loop?"
-  };
 
   var baseURL = (function() {
     // http://stackoverflow.com/a/3326554/2422398
@@ -102,7 +98,7 @@ var Lab = typeof(window) == 'undefined'
         width: canvas.width
       });
       workerTimeout = setTimeout(function() {
-        finishWorker(cmds, new Error(STRINGS.WORKER_TIMEOUT_MSG));
+        finishWorker(cmds, new Error(Lab.Strings.WORKER_TIMEOUT_MSG));
       }, WORKER_TIMEOUT_MS);
     }
 
@@ -204,6 +200,11 @@ if (typeof(PNGBaker) != 'undefined')
       e.preventDefault();
     }, false);
   });
+
+Lab.Strings = {
+  WORKER_TIMEOUT_MSG: "Your code has taken too long to execute. " +
+                      "Perhaps it contains an infinite loop?"
+};
 
 Lab.Validation = {
   properties: ['penStyle', 'penWidth'],
