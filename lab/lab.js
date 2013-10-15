@@ -18,24 +18,6 @@ var Lab = typeof(window) == 'undefined'
     return myURL.split('/').slice(0, -1).join('/') + '/';
   })();
 
-  function activateLabs() {
-    var i;
-    var scriptLabs = document.querySelectorAll('script[data-role="lab"]');
-    var labs = document.querySelectorAll('div[data-role="lab"]');
-
-    for (i = 0; i < scriptLabs.length; i++) {
-      var scriptLab = scriptLabs[i];
-      var lab = document.createElement('div');
-      scriptLab.parentNode.replaceChild(lab, scriptLab);
-      lab.appendChild(scriptLab);
-      Lab(lab);
-      lab.code.value = scriptLab.textContent.trim();
-      lab.render();
-    }
-    for (i = 0; i < labs.length; i++)
-      Lab(labs[i]);
-  }
-
   function Lab(parent) {
     if (!parent) parent = document.createElement('div');
     if (parent.render) return parent;
@@ -161,8 +143,6 @@ var Lab = typeof(window) == 'undefined'
     return parent;
   }
 
-  document.addEventListener("DOMContentLoaded", activateLabs, false);
-
   return Lab;
 })(TinyTurtle);
 
@@ -244,3 +224,22 @@ Lab.Validation = {
     obj[method].apply(obj, args);
   }
 };
+
+if (typeof(document) != 'undefined')
+  document.addEventListener("DOMContentLoaded", function activateLabs() {
+    var i;
+    var scriptLabs = document.querySelectorAll('script[data-role="lab"]');
+    var labs = document.querySelectorAll('div[data-role="lab"]');
+
+    for (i = 0; i < scriptLabs.length; i++) {
+      var scriptLab = scriptLabs[i];
+      var lab = document.createElement('div');
+      scriptLab.parentNode.replaceChild(lab, scriptLab);
+      lab.appendChild(scriptLab);
+      Lab(lab);
+      lab.code.value = scriptLab.textContent.trim();
+      lab.render();
+    }
+    for (i = 0; i < labs.length; i++)
+      Lab(labs[i]);
+  }, false);
