@@ -4,6 +4,13 @@ var Lab = (function(Validation, TinyTurtle, PNGBaker) {
   var RENDER_DELAY_MS = 100;
   var WORKER_TIMEOUT_MS = 2000;
 
+  var baseURL = (function() {
+    // http://stackoverflow.com/a/3326554/2422398
+    var scripts = document.getElementsByTagName('script');
+    var myURL = scripts[scripts.length - 1].src;
+    return myURL.split('/').slice(0, -1).join('/') + '/';
+  })();
+
   function Lab(parent, options) {
     options = options || {};
     var $ = parent.querySelector.bind(parent);
@@ -14,7 +21,7 @@ var Lab = (function(Validation, TinyTurtle, PNGBaker) {
     var workerTimeout;
     var bakedImgURL;
     var defaultContent = options.defaultContent || '';
-    var workerURL = options.workerURL || 'worker.js';
+    var workerURL = baseURL + 'worker.js';
     var workerTimeoutMsg = options.workerTimeoutMsg || 'timeout';
     var code = $(".code");
     var canvasImg = $(".canvas");
