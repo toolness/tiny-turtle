@@ -19,8 +19,20 @@ var Lab = typeof(window) == 'undefined'
   })();
 
   function activateLabs() {
+    var i;
+    var scriptLabs = document.querySelectorAll('script[data-role="lab"]');
     var labs = document.querySelectorAll('div[data-role="lab"]');
-    for (var i = 0; i < labs.length; i++)
+
+    for (i = 0; i < scriptLabs.length; i++) {
+      var scriptLab = scriptLabs[i];
+      var lab = document.createElement('div');
+      scriptLab.parentNode.replaceChild(lab, scriptLab);
+      lab.appendChild(scriptLab);
+      Lab(lab);
+      lab.code.value = scriptLab.textContent.trim();
+      lab.render();
+    }
+    for (i = 0; i < labs.length; i++)
       Lab(labs[i]);
   }
 
