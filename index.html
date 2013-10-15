@@ -58,11 +58,11 @@ stamp();
 var $ = document.querySelector.bind(document);
 
 function initLab(id, defaultContent) {
-  var lab = new Lab();
+  var lab = Lab();
 
   lab.code.value = sessionStorage[id] || defaultContent;
-  lab.el.setAttribute('id', id);
-  $('#labs').appendChild(lab.el);
+  lab.setAttribute('id', id);
+  $('#labs').appendChild(lab);
   lab.render();
   window.addEventListener('unload', function() {
     sessionStorage[id] = lab.code.value;

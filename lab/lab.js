@@ -19,7 +19,7 @@ var Lab = (function(Validation, TinyTurtle, PNGBaker) {
   function activateLabs() {
     var labs = document.querySelectorAll('div[data-role="lab"]');
     for (var i = 0; i < labs.length; i++)
-      new Lab(labs[i]);
+      Lab(labs[i]);
   }
 
   function Lab(parent) {
@@ -178,12 +178,12 @@ var Lab = (function(Validation, TinyTurtle, PNGBaker) {
     code.addEventListener('keyup', queueRendering, false);
     code.addEventListener('change', queueRendering, false);
 
-    this.render = render;
-    this.code = code;
-    this.el = parent;
-    parent.lab = this;
+    parent.render = render;
+    parent.code = code;
 
     render();
+
+    return parent;
   }
 
   document.addEventListener("DOMContentLoaded", activateLabs, false);
