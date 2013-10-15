@@ -1,6 +1,6 @@
 var Lab = typeof(window) == 'undefined'
 ? {}                                         // We're in a web worker.
-: (function(TinyTurtle, PNGBaker) {          // We're in a web page.
+: (function(TinyTurtle) {                    // We're in a web page.
   var DEFAULT_CANVAS_SIZE = 250;
   var TURTLE_WIDTH = 10;
   var TURTLE_HEIGHT = 10;
@@ -38,6 +38,7 @@ var Lab = typeof(window) == 'undefined'
 
   function Lab(parent) {
     if (!parent) parent = document.createElement('div');
+    if (parent.render) return parent;
 
     var $ = parent.querySelector.bind(parent);
     var turtle;
@@ -45,7 +46,6 @@ var Lab = typeof(window) == 'undefined'
     var source;
     var renderDelayTimeout;
     var workerTimeout;
-    var bakedImgURL;
     var workerURL = baseURL + 'worker.js';
     var code = $(".code");
     var canvasImg = $(".canvas");
@@ -63,15 +63,6 @@ var Lab = typeof(window) == 'undefined'
       clearTimeout(workerTimeout);
       worker.terminate();
       worker = null;
-    }
-
-    function bakeCanvas() {
-      var baker = new PNGBaker(canvas.toDataURL());
-      var URL = window.URL || window.webkitURL;
-      baker.textChunks['tiny-turtle-source'] = encodeURIComponent(source);
-      if (bakedImgURL) URL.revokeObjectURL(bakedImgURL);
-      canvasImg.blob = baker.toBlob();
-      canvasImg.src = bakedImgURL = URL.createObjectURL(canvasImg.blob);
     }
 
     function drawCmds(cmds) {
@@ -102,7 +93,10 @@ var Lab = typeof(window) == 'undefined'
         error.classList.remove("shown");
       }
       drawCmds(cmds);
-      bakeCanvas();
+      var event = document.createEvent('CustomEvent');
+      event.initCustomEvent('render', true, true, {canvas: canvas});
+      var wasDefaultPrevented = !parent.dispatchEvent(event);
+      if (!wasDefaultPrevented) canvasImg.src = canvas.toDataURL();
     }
 
     function render() {
@@ -130,38 +124,13 @@ var Lab = typeof(window) == 'undefined'
       }, WORKER_TIMEOUT_MS);
     }
 
-    function onDragEvent(e) {
-      if (e.type == 'drop') {
-        if (e.dataTransfer.files.length) {
-          var file = e.dataTransfer.files[0];
-          if (file.type == 'image/png') {
-            var reader = new FileReader();
-            reader.onloadend = function() {
-              var baker = new PNGBaker(reader.result);
-              var bakedSource = baker.textChunks['tiny-turtle-source'];
-              if (bakedSource) {
-                code.value = decodeURIComponent(bakedSource);
-                render();
-              }
-            };
-            reader.readAsArrayBuffer(file);
-            e.stopPropagation();
-            e.preventDefault();
-          }
-        }
-        return;
-      } else {
-        e.stopPropagation();
-        e.preventDefault();
-      }
-    }
-
     parent.setAttribute('data-role', 'lab');
     parent.classList.add('lab');
     if (!canvasImg) {
       canvasImg = document.createElement('img');
       canvasImg.classList.add('canvas');
-      canvasImg.width = canvasImg.height = DEFAULT_CANVAS_SIZE;
+      canvasImg.setAttribute('width', DEFAULT_CANVAS_SIZE);
+      canvasImg.setAttribute('height', DEFAULT_CANVAS_SIZE);
       parent.appendChild(canvasImg);
     }
     if (!code) {
@@ -177,24 +146,16 @@ var Lab = typeof(window) == 'undefined'
       parent.appendChild(error);
     }
 
-    ['dragenter', 'dragleave', 'dragover', 'drop'].forEach(function(type) {
-      parent.addEventListener(type, onDragEvent);
-    });
-    if (navigator.msSaveOrOpenBlob)
-      // IE10's "Save Picture As..." strips out the tEXt chunks from our
-      // PNG, so we'll override things to provide our own functionality.
-      canvasImg.addEventListener('contextmenu', function(e) {
-        if (!this.blob) return;
-        navigator.msSaveOrOpenBlob(this.blob, 'canvas.png');
-        e.preventDefault();
-      });
-    canvas.width = canvasImg.width; canvas.height = canvasImg.height;
+    canvas.width = canvasImg.getAttribute('width');
+    canvas.height = canvasImg.getAttribute('height');
     code.addEventListener('keyup', queueRendering, false);
     code.addEventListener('change', queueRendering, false);
 
     parent.render = render;
     parent.code = code;
+    parent.canvasImage = canvasImg;
 
+    Lab.creationHooks.forEach(function(hook) { hook(parent); });
     render();
 
     return parent;
@@ -203,7 +164,66 @@ var Lab = typeof(window) == 'undefined'
   document.addEventListener("DOMContentLoaded", activateLabs, false);
 
   return Lab;
-})(TinyTurtle, PNGBaker);
+})(TinyTurtle);
+
+Lab.creationHooks = [];
+
+if (typeof(PNGBaker) != 'undefined')
+  Lab.creationHooks.push(function(lab) {
+    var bakedImgURL;
+
+    function onDragEvent(e) {
+      if (e.type == 'drop') {
+        if (e.dataTransfer.files.length) {
+          var file = e.dataTransfer.files[0];
+          if (file.type == 'image/png') {
+            var reader = new FileReader();
+            reader.onloadend = function() {
+              var baker = new PNGBaker(reader.result);
+              var bakedSource = baker.textChunks['tiny-turtle-source'];
+              if (bakedSource) {
+                lab.code.value = decodeURIComponent(bakedSource);
+                lab.render();
+              }
+            };
+            reader.readAsArrayBuffer(file);
+            e.stopPropagation();
+            e.preventDefault();
+          }
+        }
+        return;
+      } else {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    }
+
+    ['dragenter', 'dragleave', 'dragover', 'drop'].forEach(function(type) {
+      lab.addEventListener(type, onDragEvent);
+    });
+
+    if (navigator.msSaveOrOpenBlob)
+      // IE10's "Save Picture As..." strips out the tEXt chunks from our
+      // PNG, so we'll override things to provide our own functionality.
+      lab.canvasImage.addEventListener('contextmenu', function(e) {
+        if (!this.blob) return;
+        navigator.msSaveOrOpenBlob(this.blob, 'canvas.png');
+        e.preventDefault();
+      });
+
+    lab.addEventListener('render', function bakeSourceCodeIntoImage(e) {
+      var canvasImg = lab.canvasImage;
+      var source = lab.code.value;
+      var canvas = e.detail.canvas;
+      var baker = new PNGBaker(canvas.toDataURL());
+      var URL = window.URL || window.webkitURL;
+      baker.textChunks['tiny-turtle-source'] = encodeURIComponent(source);
+      if (bakedImgURL) URL.revokeObjectURL(bakedImgURL);
+      canvasImg.blob = baker.toBlob();
+      canvasImg.src = bakedImgURL = URL.createObjectURL(canvasImg.blob);
+      e.preventDefault();
+    }, false);
+  });
 
 Lab.Validation = {
   properties: ['penStyle', 'penWidth'],
