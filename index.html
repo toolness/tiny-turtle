@@ -21,7 +21,7 @@ a:hover {
   background: yellow;
 }
 
-#lab {
+.lab {
   position: relative;
   height: 280px;
 }
@@ -81,14 +81,17 @@ footer {
 }
 </style>
 <h1>TinyTurtle Lab</h1>
-<div id="lab">
-  <img class="canvas" width="250" height="250">
-  <textarea class="code" spellcheck="false" autofocus></textarea>
-  <div class="error">error goes here</div>
-</div>
-<div id="timeout-msg" style="display: none">
-  Your code has taken too long to execute. Perhaps it contains
-  an infinite loop?
+<div id="labs"></div>
+<div id="templates" style="display: none">
+  <div class="lab">
+    <img class="canvas" width="250" height="250">
+    <textarea class="code" spellcheck="false"></textarea>
+    <div class="error">error goes here</div>
+  </div>
+  <div class="timeout-msg">
+    Your code has taken too long to execute. Perhaps it contains
+    an infinite loop?
+  </div>
 </div>
 <footer>
   [ <a href="http://github.com/toolness/tiny-turtle" target="_blank">GitHub</a>
@@ -118,15 +121,35 @@ stamp();
 <script>
 var $ = document.querySelector.bind(document);
 
-Lab($("#lab"), {
-  workerURL: 'lab/worker.js',
-  defaultContent: $("#sample").textContent.trim(),
-  workerTimeoutMsg: $("#timeout-msg").textContent
-});
+function initEditorPane(id, defaultContent) {
+  var lab = $('#templates .lab').cloneNode(true);
+
+  lab.setAttribute('id', id);
+  $('#labs').appendChild(lab);
+  Lab(lab, {
+    workerURL: 'lab/worker.js',
+    defaultContent: sessionStorage[id] || defaultContent,
+    workerTimeoutMsg: $("#templates .timeout-msg").textContent
+  });
+  window.addEventListener('unload', function() {
+    sessionStorage[id] = lab.querySelector('.code').value;
+  }, false);
+}
+
+function initEditorPanes() {
+  var panes = parseInt((location.search.match(/panes=([1-9])/) || [0,1])[1]);
+  var sampleCode = $("#sample").textContent.trim();
+
+  for (var i = 0; i < panes; i++)
+    initEditorPane('tinyturtle-lab-' + i, i == 0 ? sampleCode : '');
+}
 
 $("#togetherjs").addEventListener('click', function(e) {
   e.preventDefault();
   TogetherJS(this);
 }, false);
+
+initEditorPanes();
+document.querySelectorAll("#labs .lab .code")[0].focus();
 </script>
 <script async src="https://togetherjs.com/togetherjs-min.js"></script>
