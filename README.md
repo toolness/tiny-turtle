@@ -91,7 +91,7 @@ t.box 70
 ## Supported Browsers
 
 This code has been tested on Internet Explorer 10,
-Safari 6 (desktop and iOS), Chrome 30, and Firefox 24.
+Safari 6 (desktop and iOS), Chrome 30, Opera 17, and Firefox 24.
 
 ## License
 
