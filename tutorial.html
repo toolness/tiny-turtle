@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="lab/vendor/foundation.css">
+<link rel="stylesheet" href="lab/base.css">
+<link rel="stylesheet" href="lab/lab.css">
+<title>TinyTurtle Tutorial</title>
+<h1>TinyTurtle Tutorial</h1>
+
+<p>
+  Before embarking on this journey, you may want to check out
+  <a href="http://jsforcats.com">JavaScript For Cats</a> or
+  <a href="http://eloquentjavascript.net/">Eloquent JavaScript</a> to 
+  understand the basics of the language. Or you can just start hacking
+  and learn things as you go.
+</p>
+
+<h2>I. Square</h2>
+
+<blockquote>
+  Turtle geometry is a different style of doing geometry, just as Euclid’s 
+  axiomatic style and Descartes’s analytic style are different from one
+  another. Euclid’s is a <em>logical</em> style. Descartes’s is an
+  <em>algebraic</em> style. Turtle geometry is a <em>computational</em>
+  style of geometry.
+  <cite data-page="55">Seymour Papert, <em>Mindstorms</em></cite>
+</blockquote>
+
+<p>
+  The <code>forward</code> function tells the Turtle to move forward by
+  some number of pixels.
+</p>
+
+<p>
+  The <code>right</code> function tells it to turn right by 
+  some number of degrees.
+</p>
+
+<p>
+  The <code>stamp</code> function tells it to draw its current
+  <em>state</em>: that is, its position and orientation.
+</p>
+
+<p>
+  Can you add to the code below to make the Turtle draw a square 
+  100 pixels wide and end with the same state that it started?
+</p>
+
+<script data-role="lab" type="javascript/lab">
+forward(100);
+right(90);
+stamp();
+</script>
+
+<script data-role="solution" type="javascript/lab" data-text="See Atul's solution">
+// Here is Atul's solution to the square problem.
+forward(100);
+right(90);
+forward(100);
+right(90);
+forward(100);
+right(90);
+forward(100);
+right(90);
+stamp();
+</script>
+
+<div class="panel">
+  <strong>Hint: </strong> If you're having trouble, try to "play Turtle." 
+  Stand up and move your body as the Turtle on the screen must move in order 
+  to make the pattern you want.
+</div>
+
+<h2>II. Squares</h2>
+
+<p>
+  If we encapsulate our square-drawing code into a function that takes an
+  argument specifying the size of square to draw, we can use it as a building 
+  block for more interesting things.
+</p>
+
+<p>
+  Can you complete the code below?
+</p>
+
+<script data-role="lab" type="javascript/lab">
+function square(width) {
+  // Fill in this function!
+}
+
+square(100);
+right(20);
+square(80);
+right(20);
+square(60);
+stamp();
+</script>
+
+<script data-role="solution" type="javascript/lab" data-text="See Atul's solution">
+// Here is Atul's solution to the squares problem.
+function square(width) {
+  for (var i = 0; i < 4; i++) {
+    forward(width);
+    right(90);
+  }
+}
+
+square(100);
+right(20);
+square(80);
+right(20);
+square(60);
+stamp();
+</script>
+
+<aside class="panel">
+
+<h3>Aside: Code Is For People</h3>
+
+<blockquote>
+  Programs must be written for people to read, and only incidentally for machines to execute.
+  <cite>Hal Abelson &amp; Gerald Sussman,
+    Structure and Interpretation of Computer Programs</cite>
+</blockquote>
+
+<blockquote>
+  See, all my procedures are mind-size bites.
+  <cite data-page="103">Robert, a seventh grader, <em>Mindstorms</em></cite>
+</blockquote>
+
+<p>
+  Writing functions keeps our code compartmentalized
+  into mind-size bites that are easy for humans to understand. Whenever
+  you're having trouble understanding your own code&mdash;and
+  <em>especially</em> when you notice yourself copying-and-pasting lots of 
+  chunks of it&mdash;consider splitting it up into functions to make it
+  more concise and easier to grasp. This process is called
+  <em>refactoring</em> and it's a useful practice that even professional
+  programmers struggle to do regularly.
+</p>
+</aside>
+
+<script src="tiny-turtle.js"></script>
+<script src="lab/lab.js"></script>
+<script>
+(function activateSolutions() {
+  var solutions = document.querySelectorAll('[data-role="solution"]');
+
+  [].slice.call(solutions).forEach(function(script) {
+    var btn = document.createElement('button');
+    btn.classList.add('tiny');
+    btn.classList.add('button');
+    btn.classList.add('secondary');
+    btn.textContent = script.getAttribute('data-text');
+    btn.onclick = function() {
+      var lab = Lab();
+      lab.code.value = script.textContent.trim();
+      btn.parentNode.replaceChild(lab, btn);
+      lab.render();
+    };
+    script.parentNode.replaceChild(btn, script);
+  });
+})();
+</script>
