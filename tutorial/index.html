@@ -195,42 +195,40 @@ stamp();
 <h2>IV. Circle</h2>
 
 <p>
-  Given that the perimeter of a circle is <em>2&pi;r</em> (where
-  <em>r</em> is the radius), can you use the Turtle Total Trip Theorem
-  to finish this function that draws a circle based on a given radius,
-  and returns with the Turtle in its original state?
+  Can you use the Turtle Total Trip Theorem to finish this function that
+  draws a circle based on a given circumference, and returns with the
+  Turtle in its original state?
 </p>
 
 <script data-role="lab" type="javascript/lab">
-function circle(radius) {
-  var perimeter = 2 * Math.PI * radius;
+function circle(circumference) {
   // Draw a circle here.
 }
 
-circle(50);
+circle(300);
 stamp();
 </script>
 
 <script data-role="solution" type="javascript/lab" data-text="See Atul's solution">
 // Here is Atul's solution to the circle problem.
 
-function circle(radius) {
-  var perimeter = 2 * Math.PI * radius;
-  // When you walk in a circle, you move forward a tiny bit and turn right
-  // a tiny bit.
+function circle(circumference) {
+  // When we walk in a circle, we move forward a tiny bit and turn right
+  // a tiny bit. By the end, we will have traveled circumference distance
+  // and rotated 360 degrees.
   for (var i = 0; i < 360; i++) {
-    forward(perimeter / 360);
+    forward(circumference / 360);
     right(1);
   }
 }
 
-circle(50);
+circle(300);
 stamp();
 </script>
 
 <div class="panel">
   <strong>Hint: </strong> It may help conceptually to think
-  of the circle's perimeter as the total distance the Turtle must travel
+  of the circumference as the total distance the Turtle must travel
   before it returns to its original state. Also, play Turtle!
 </div>
 
