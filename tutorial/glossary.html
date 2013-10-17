@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../lab/vendor/foundation.css">
+<link rel="stylesheet" href="../lab/base.css">
+<style>
+dt {
+  transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -webkit-transition: background-color 1s;
+}
+
+dt.highlight {
+  background: yellow;
+}
+</style>
+<title>TinyTurtle Tutorial Glossary</title>
+<h1>TinyTurtle Tutorial Glossary</h1>
+
+<p>
+  Here's some terminology used in the <a href="./">tutorial</a> that you
+  might be unfamiliar with.
+</p>
+
+<dl>
+  <dt id="api">API</dt>
+  <dd>
+    <blockquote>
+      APIs are the filament that connects what i want to <em>do</em>
+      with what i want to <em>learn</em>.
+      <cite data-time="4:27">Diana Kimball,
+        <a href="http://www.cbc.ca/player/Radio/ID/2332634295/">Coding
+          as a Liberal Art</a>
+      </cite>
+    </blockquote>
+    <p>
+      Technically, API stands for <em>Application Programming
+      Interface</em>. Practically speaking, it's really just a
+      collection of (hopefully) well-documented functions and similar
+      abstractions that allow you to do what you want to do with a
+      programming language.
+    </p>
+    <p>
+      If a programming language is a <em>language</em>, then an API
+      is a bit like a specialized <em>dictionary</em>, providing useful
+      nouns and verbs that programs can use to do their job.
+    </p>
+  </dd>
+
+  <dt id="function">Function</dt>
+  <dd>
+    <p>A function is like a verb, or action, in a programming
+      language. It's easy to create your own; see the 
+      <a href="http://jsforcats.com/#writing-functions">Making new
+      functions</a> section of <em>JavaScript for Cats</em> to
+      learn how.
+  </dd>
+
+  <dt id="javascript">JavaScript</dt>
+  <dd>
+    <blockquote>
+      JavaScript is an astonishing language, in the very worst sense.
+      <cite><a href="http://javascript.crockford.com/popular.html">
+        Douglas Crockford</a></cite>
+    </blockquote>
+    <p>
+      JavaScript is a programming language created by Brendan Eich in 1995
+      under the time constraints of the <a href="http://en.wikipedia.org/wiki/Browser_wars#The_first_browser_war">First Browser War</a>
+      and some marketing constraints imposed by Netscape's partnership
+      with Sun Microsystems. These contributed to it being the world's
+      most <a href="http://javascript.crockford.com/javascript.html">misunderstood</a> programming language.
+    </p>
+    <p>
+      Because of this, JavaScript is not a very easy language to learn,
+      and it's a lot less readable than languages that lacked its
+      constraints. However, it's also ubiquitous: it runs in web pages,
+      which makes it extremely easy to share, and it can also be used to
+      program robots, financial trading platforms, web servers, and
+      a lot more. In other words, if there's something you want to do,
+      there's probably an <a href="#api">API</a> for it in JavaScript,
+      which makes it an extremely useful language despite its flaws.
+    </p>
+  </dd>
+</dl>
+
+<script>
+var HIGHLIGHT_DURATION = 1000;
+
+function highlight(el) {
+  if (el.classList.contains("highlight")) return;
+  el.classList.add("highlight");
+  setTimeout(function() {
+    el.classList.remove("highlight");
+  }, HIGHLIGHT_DURATION);
+}
+
+onload = onhashchange = function highlightLocationHash() {
+  var el = document.querySelector(location.hash);
+
+  if (el) highlight(el);
+};
+
+onclick = function highlightLinkTarget(e) {
+  if (e.target.nodeName != 'A') return;
+
+  var href = e.target.getAttribute('href');
+
+  if (href && href[0] == '#') highlight(document.querySelector(href));
+};
+</script>
