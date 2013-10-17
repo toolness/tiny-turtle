@@ -150,6 +150,48 @@ stamp();
 </p>
 </aside>
 
+<h2>III. Triangle</h2>
+
+<p>One of the principles of Turtle geometry is called the <strong>Total
+  Turtle Trip Theorem</strong>:
+</p>
+
+<blockquote>
+  If a Turtle takes a trip around the boundary of any area and ends up in
+  the state in which it started, then the sum of all turns will be
+  360 degrees.
+  <cite data-page="76">Seymour Papert, Mindstorms</cite>
+</blockquote>
+
+<p>
+  Can you use this theorem to fix the code below, which is trying to
+  draw an equilateral triangle and finish with the Turtle in the same
+  state that it started? You just need to replace <code>SOMETHING</code>
+  with an actual number.
+</p>
+
+<script data-role="lab" type="javascript/lab">
+for (var i = 0; i < 3; i++) {
+  forward(100);
+  right(SOMETHING);
+}
+
+stamp();
+</script>
+
+<script data-role="solution" type="javascript/lab" data-text="See Atul's solution">
+// Here is Atul's solution to the triangle problem.
+for (var i = 0; i < 3; i++) {
+  forward(100);
+  // The turtle needs to make 3 identical turns to draw a triangle, and
+  // since they all need to add up to 360, that means each turn should be
+  // 360 divided by 3, or 120 degrees.
+  right(120);
+}
+
+stamp();
+</script>
+
 <script src="../tiny-turtle.js"></script>
 <script src="../lab/lab.js"></script>
 <script>
