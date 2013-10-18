@@ -15,7 +15,7 @@
   and learn things from the <a href="glossary.html">glossary</a> as you go.
 </p>
 
-<div class="panel">
+<aside class="panel">
   <h3><a id="tips" href="#tips">Tinkering Tips</a></h3>
 
   <blockquote>
@@ -40,12 +40,10 @@
   </p>
 
   <p>
-    <strong>If you're having trouble, try to "play Turtle."</strong>
-    Stand up and move your body as the Turtle on the screen must move in
-    order to make the pattern you want.
+    <strong>Ask for help.</strong> If you're stumped, you can always
+    <a onclick="TogetherJS(this);">invite a friend</a> to help you out.
   </p>
-
-</div>
+</aside>
 
 <h2><a id="square" href="#square">I. Square</a></h2>
 
@@ -104,6 +102,12 @@ right(90);
 
 stamp();
 </script>
+
+<aside class="panel">
+  <strong>Hint:</strong> If you're having trouble, try to "play Turtle."
+  Stand up and move your body as the Turtle on the screen must move in
+  order to make the pattern you want.
+</aside>
 
 <h2><a id="squares" href="#squares">II. Squares</a></h2>
 
@@ -253,15 +257,16 @@ circle(300);
 stamp();
 </script>
 
-<div class="panel">
-  <strong>Hint: </strong> It may help conceptually to think
+<aside class="panel">
+  <strong>Hint:</strong> It may help conceptually to think
   of the circumference as the total distance the Turtle must travel
   before it returns to its original state. Also, play Turtle!
-</div>
+</aside>
 
 <script src="../tiny-turtle.js"></script>
 <script src="../lab/lab.js"></script>
 <script src="highlight.js"></script>
+<script async src="https://togetherjs.com/togetherjs-min.js"></script>
 <script>
 (function activateSolutions() {
   var solutions = document.querySelectorAll('[data-role="solution"]');
