@@ -2,17 +2,7 @@
 <meta charset="utf-8">
 <link rel="stylesheet" href="../lab/vendor/foundation.css">
 <link rel="stylesheet" href="../lab/base.css">
-<style>
-dt {
-  transition: background-color 1s;
-  -moz-transition: background-color 1s;
-  -webkit-transition: background-color 1s;
-}
-
-dt.highlight {
-  background: yellow;
-}
-</style>
+<link rel="stylesheet" href="highlight.css">
 <title>TinyTurtle Tutorial Glossary</title>
 <h1>TinyTurtle Tutorial Glossary</h1>
 
@@ -22,7 +12,7 @@ dt.highlight {
 </p>
 
 <dl>
-  <dt id="api">API</dt>
+  <dt><a id="api" href="#api">API</a></dt>
   <dd>
     <blockquote>
       APIs are the filament that connects what i want to <em>do</em>
@@ -46,7 +36,7 @@ dt.highlight {
     </p>
   </dd>
 
-  <dt id="function">Function</dt>
+  <dt><a id="function" href="#function">Function</a></dt>
   <dd>
     <p>A function is like a verb, or action, in a programming
       language. It's easy to create your own; see the 
@@ -55,7 +45,7 @@ dt.highlight {
       learn how.
   </dd>
 
-  <dt id="javascript">JavaScript</dt>
+  <dt><a id="javascript" href="#javascript">JavaScript</a></dt>
   <dd>
     <blockquote>
       JavaScript is an astonishing language, in the very worst sense.
@@ -82,28 +72,4 @@ dt.highlight {
   </dd>
 </dl>
 
-<script>
-var HIGHLIGHT_DURATION = 1000;
-
-function highlight(el) {
-  if (el.classList.contains("highlight")) return;
-  el.classList.add("highlight");
-  setTimeout(function() {
-    el.classList.remove("highlight");
-  }, HIGHLIGHT_DURATION);
-}
-
-onload = onhashchange = function highlightLocationHash() {
-  var el = document.querySelector(location.hash);
-
-  if (el) highlight(el);
-};
-
-onclick = function highlightLinkTarget(e) {
-  if (e.target.nodeName != 'A') return;
-
-  var href = e.target.getAttribute('href');
-
-  if (href && href[0] == '#') highlight(document.querySelector(href));
-};
-</script>
+<script src="highlight.js"></script>
