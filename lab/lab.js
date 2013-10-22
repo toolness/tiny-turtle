@@ -102,6 +102,7 @@ var Lab = typeof(window) == 'undefined'
       }, WORKER_TIMEOUT_MS);
     }
 
+    parent.setAttribute('contextmenu', Lab.contextMenu.id);
     parent.setAttribute('data-role', 'lab');
     parent.classList.add('lab');
     if (!canvasImg) {
@@ -244,3 +245,28 @@ if (typeof(document) != 'undefined')
     for (i = 0; i < labs.length; i++)
       Lab(labs[i]);
   }, false);
+
+if (typeof(document) != "undefined")
+  Lab.contextMenu = (function() {
+    var menu = document.getElementById('tiny-turtle-context-menu');
+
+    if (!menu) {
+      menu = document.createElement('menu');
+      menu.setAttribute('type', 'context');
+      menu.id = 'tiny-turtle-context-menu';
+      document.body.appendChild(menu);
+    }
+
+    // The associated DOM element that a context menu item is activated
+    // with doesn't seem to be communicated with the menu item's
+    // click event, so we'll keep track of it ourselves here.
+    menu.relatedLab = null;
+
+    Lab.creationHooks.push(function(lab) {
+      lab.addEventListener("contextmenu", function() {
+        menu.relatedLab = this;
+      }, false);
+    });
+
+    return menu;
+  })();
