@@ -7,7 +7,7 @@ var Lab = typeof(window) == 'undefined'
   var RENDER_DELAY_MS = 100;
   var WORKER_TIMEOUT_MS = 2000;
 
-  var baseURL = (function() {
+  var baseURL = Lab.baseURL = (function() {
     // http://stackoverflow.com/a/3326554/2422398
     var scripts = document.getElementsByTagName('script');
     var myURL = scripts[scripts.length - 1].src;
@@ -203,6 +203,7 @@ if (typeof(PNGBaker) != 'undefined')
   });
 
 Lab.Strings = {
+  EXPORT_TO_HTML: "Export to HTML",
   WORKER_TIMEOUT_MSG: "Your code has taken too long to execute. " +
                       "Perhaps it contains an infinite loop?"
 };
@@ -227,7 +228,7 @@ Lab.Validation = {
   }
 };
 
-if (typeof(document) != 'undefined')
+if (typeof(document) != 'undefined') {
   document.addEventListener("DOMContentLoaded", function activateLabs() {
     var i;
     var scriptLabs = document.querySelectorAll('script[data-role="lab"]');
@@ -246,7 +247,6 @@ if (typeof(document) != 'undefined')
       Lab(labs[i]);
   }, false);
 
-if (typeof(document) != "undefined")
   Lab.contextMenu = (function() {
     var menu = document.getElementById('tiny-turtle-context-menu');
 
@@ -270,3 +270,18 @@ if (typeof(document) != "undefined")
 
     return menu;
   })();
+
+  (function AddExportToHTML() {
+    var exportItem = document.createElement('menuitem');
+
+    exportItem.label = Lab.Strings.EXPORT_TO_HTML;
+    exportItem.onclick = function() {
+      var code = this.parentNode.relatedLab.code.value;
+      var url = Lab.baseURL + 'export-to-html.html?code=' +
+                encodeURIComponent(code);
+      window.open(url);
+    };
+
+    Lab.contextMenu.appendChild(exportItem);
+  })();
+}

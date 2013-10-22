@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link href="vendor/foundation.css" rel="stylesheet">
+<link href="base.css" rel="stylesheet">
+<link href="lab.css" rel="stylesheet">
+<style>
+textarea {
+  width: 100%;
+  height: 300px;
+  font-family: Menlo, Monaco, "Lucida Console", monospace;
+}
+</style>
+<title>Export to HTML</title>
+<h1>Export to HTML</h1>
+<p>
+  Here is the HTML for your creation. Copy and paste it into a
+  a site like <a href="https://thimble.webmaker.org/">Thimble</a>,
+  <a href="http://jsbin.com/">jsbin</a>, or your favorite
+  text editor.
+</p>
+<textarea id="code" spellcheck="false"></textarea>
+
+<script>
+var CLOSE_SCRIPT = '</' + 'script>';
+var code = decodeURIComponent(location.search.match(/code=([^&]*)/)[1]);
+var codeArea = document.getElementById('code');
+var lines = [
+  '<!DOCTYPE html>',
+  '<meta charset="utf-8">',
+  '<title>My TinyTurtle Creation</title>',
+  '<canvas width="250" height="250"></canvas>',
+  '<script src="' + absPath('../tiny-turtle.js') + '">' + CLOSE_SCRIPT,
+  '<script>',
+  'TinyTurtle.apply(window);',
+  '',
+  code,
+  CLOSE_SCRIPT
+];
+
+function absPath(url) {
+  var a = document.createElement('a');
+  a.setAttribute('href', url);
+  return a.href;
+}
+
+codeArea.value = lines.join('\n');
+</script>
