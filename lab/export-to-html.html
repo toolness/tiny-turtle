@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <link href="vendor/foundation.css" rel="stylesheet">
+<link href="vendor/codemirror/codemirror.css" rel="stylesheet">
 <link href="base.css" rel="stylesheet">
-<link href="lab.css" rel="stylesheet">
+<link href="lab.codemirror.css" rel="stylesheet">
 <style>
-textarea {
+.CodeMirror {
   width: 100%;
-  height: 300px;
+  height: auto;
   font-family: Menlo, Monaco, "Lucida Console", monospace;
+  font-size: smaller;
+  background: #f0f0f0;
+}
+
+.CodeMirror-scroll {
+  overflow-y: hidden;
 }
 </style>
 <title>Export to HTML</title>
@@ -20,6 +27,11 @@ textarea {
 </p>
 <textarea id="code" spellcheck="false"></textarea>
 
+<script src="vendor/codemirror/codemirror.js"></script>
+<script src="vendor/codemirror/javascript.js"></script>
+<script src="vendor/codemirror/xml.js"></script>
+<script src="vendor/codemirror/css.js"></script>
+<script src="vendor/codemirror/htmlmixed.js"></script>
 <script>
 var CLOSE_SCRIPT = '</' + 'script>';
 var code = decodeURIComponent(location.search.match(/code=([^&]*)/)[1]);
@@ -44,4 +56,9 @@ function absPath(url) {
 }
 
 codeArea.value = lines.join('\n');
+
+CodeMirror.fromTextArea(codeArea, {
+  theme: 'lab',
+  mode: 'htmlmixed'
+});
 </script>
