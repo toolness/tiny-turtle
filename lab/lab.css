@@ -27,13 +27,16 @@
   width: -webkit-calc(100% - 260px);
   width: -moz-calc(100% - 260px);
   width: calc(100% - 260px);
-  padding: 4px;
   height: 250px;
   resize: none;
   border: none;
   background: #f0f0f0;
   font-family: Menlo, Monaco, "Lucida Console", monospace;
   font-size: small;
+}
+
+.lab textarea.code {
+  padding: 4px;
 }
 
 .lab .error {
