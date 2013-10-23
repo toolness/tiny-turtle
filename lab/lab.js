@@ -135,7 +135,6 @@ var Lab = typeof(window) == 'undefined'
     parent.canvasImage = canvasImg;
 
     Lab.creationHooks.forEach(function(hook) { hook(parent); });
-    render();
 
     return parent;
   }
@@ -244,7 +243,7 @@ if (typeof(document) != 'undefined') {
       lab.render();
     }
     for (i = 0; i < labs.length; i++)
-      Lab(labs[i]);
+      Lab(labs[i]).render();
   }, false);
 
   Lab.contextMenu = (function() {
