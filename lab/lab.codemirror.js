@@ -22,7 +22,7 @@ Lab.creationHooks.push(function(lab) {
       lab.code.parentNode.replaceChild(element, lab.code);
     }, options);
     codeMirror.on("change", function propagateChangeToUnderlyingCode() {
-      var event = document.createEvent('event');
+      var event = document.createEvent('HTMLEvents');
       event.initEvent('change', true, true);
       lab.code.value = codeMirror.getValue();
       lab.code.dispatchEvent(event);
