@@ -25,7 +25,6 @@ function TinyTurtle(canvas) {
     if (rotation < 0) rotation += 360;
   };
 
-  self.canvas = canvas;
   self.penStyle = 'black';
   self.penWidth = 1;
   self.penUp = function() { isPenDown = false; return self; };
@@ -45,7 +44,7 @@ function TinyTurtle(canvas) {
     return self;
   };
   self.stamp = function(size) {
-    var ctx = self.canvas.getContext('2d');
+    var ctx = canvas.getContext('2d');
     ctx.save();
     ctx.strokeStyle = ctx.fillStyle = self.penStyle;
     ctx.lineWidth = self.penWidth;
@@ -60,6 +59,7 @@ function TinyTurtle(canvas) {
   self.right = self.rt = function(deg) { rotate(-deg); return self; };
 
   Object.defineProperties(self, {
+    canvas: {get: function() { return canvas; }},
     rotation: {get: function() { return rotation; }},
     position: {get: function() { return {x: position.x, y: position.y}; }},
     pen: {get: function() { return isPenDown ? 'down' : 'up'; }}

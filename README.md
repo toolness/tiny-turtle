@@ -88,6 +88,89 @@ t.left 10
 t.box 70
 ```
 
+## API
+
+The `TinyTurtle` constructor takes only one optional argument, which is
+the [HTMLCanvasElement][] to draw on. If not present, the first canvas
+element on the page is used.
+
+### Methods
+
+**forward(amount)**
+
+Move the turtle forward by the given number of pixels. If the pen is
+down, a line is drawn from its previous position to its new position.
+
+The `fd` method can be used as shorthand for this.
+
+**left(degrees)**
+
+Rotate the turtle to its left by the given number of degrees.
+
+The `lt` method can be used as shorthand for this.
+
+**right(degrees)**
+
+Rotate the turtle to its right by the given number of degrees.
+
+The `rt` method can be used as shorthand for this.
+
+**stamp()**
+
+Draw the turtle as a triangle that represents its current state in the
+following ways:
+
+* The triangle is drawn at the turtle's current position.
+* The triangle is pointing in the direction that the turtle is currently
+  oriented towards.
+* If the pen is up, the triangle is drawn as an outline; otherwise, it's
+  filled.
+* The color and outline of the triangle is drawn using the current pen
+  style and pen width.
+
+**penUp()**
+
+Put the pen up, so that movements by the turtle don't draw anything on
+the canvas.
+
+**penDown()**
+
+Put the pen down, so that movements by the turtle draw a path on the canvas.
+
+### Properties
+
+**penStyle** (read/write)
+
+A string describing the style that the turtle's path is drawn in. This
+can be represented as any one of:
+
+* A hexadecimal color like `#00FF00`
+* A [RGBA][] quad like `rgba(0, 255, 0, 0.5)`
+* A [HSLA][] quad like `hsla(50, 100%, 50%, 0.5)`
+* A [CSS color name][] like `red`.
+
+**penWidth** (read/write)
+
+The width of the turtle's path, in pixels.
+
+**canvas** (read-only)
+
+The [HTMLCanvasElement][] the turtle is drawing on.
+
+**rotation** (read-only)
+
+The current rotation of the turtle, in degrees.
+
+**position** (read-only)
+
+The current position of the turtle, as an object with `x` and `y` 
+properties.
+
+**pen** (read-only)
+
+The string `up` or `down` indicating the current state of the turtle's
+pen.
+
 ## Supported Browsers
 
 This code has been tested on Internet Explorer 10,
@@ -102,4 +185,8 @@ Public Domain [CC0 1.0 Universal][cczero].
   [Thimble]: https://thimble.webmaker.org/
   [jsbin]: http://jsbin.com/
   [CoffeeScript]: http://coffeescript.org/
+  [HTMLCanvasElement]: https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement
+  [RGBA]: http://www.w3.org/TR/css3-color/#rgba-color
+  [HSLA]: http://www.w3.org/TR/css3-color/#hsla-color
+  [CSS color name]: http://www.w3.org/TR/css3-color/#svg-color
   [cczero]: http://creativecommons.org/publicdomain/zero/1.0/
